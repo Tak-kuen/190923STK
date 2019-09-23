@@ -1,8 +1,8 @@
 package com.yjc.stk.service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
+import com.yjc.stk.domain.MemberVO;
 
 public interface MemberService {
-	public List<Map<String,Object>> getMemberList();
+	public ArrayList<MemberVO> getMemberList();
 }
