@@ -10,5 +10,8 @@
 </h1>
 
 <P>  The time on the server is ${serverTime}. </P>
+<c:forEach var="list" items="${memlist}">
+<p>${list.member_id}</p>
+</c:forEach>
 </body>
 </html>
