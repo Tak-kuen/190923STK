@@ -8,6 +8,7 @@
 	<title>1501163 송탁근</title>
 	<link rel="stylesheet" href="<c:url value="/resources/css/main.css"/>" />
 	<script type="text/javascript" src="<c:url value="/resources/js/jquery.min.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/resources/js/main.js"/>"></script>
 	<script>
 		$(function() {
 			
@@ -15,19 +16,26 @@
 	</script>
 </head>
 <body>
-<div class="AppWrap">
+<div class="WebWrap">
         <div class="Login">
-            <h1>My SNS Service</h1>
-            <br>
-            <h3>로그인해주세요</h3>
-            <p>아이디</p>
-            <input type="text" class="loginTxtID" maxlength="50">
-            <p>비밀번호</p>
-            <input type="password" class="loginTxtPw" maxlength="50">
-            <br>
-            <br>
-            <button class="loginBtnLogin">로그인</button>
-            <button class="loginBtnJoin">회원가입</button>
+            <div class="Navi">
+            	<div class="NaviPadding">
+            		<h2>자유게시판</h2>
+            		<p>아이디
+            		<input type="text" class="loginTxtID" size="10" line-height="21">
+            		비밀번호
+            		<input type="password" class="loginTxtPw"size="10" line-height="21"></p>
+            		<div class="btnBox">
+            		<button class="loginBtnLogin">로그인</button>
+            		<button class="loginBtnJoin">회원가입</button>
+            		</div>
+            	</div>
+            </div>
+            <div class="HeightPadding"></div>
+            <br/>
+            <div class="BeItems"></div>
+            
+            
         </div>
         <div class="Join">
             <h1>My SNS Service</h1>
@@ -47,10 +55,10 @@
         <div class="Main">
             <div class="Navi">
                 <div class="NaviPadding">
-                    <h2>My SNS Service</h2>
+                    <h2>자유게시판</h2>
                     <p>안녕하세요, <b>사용자</b>님.</p>
-                    <button class="mainBtnWrite AppBtnBlue">글쓰기</button>
-                    <button class="mainBtnLogout AppBtnRed">로그아웃</button>
+                    <button class="mainBtnWrite BtnBlue">글쓰기</button>
+                    <button class="mainBtnLogout BtnRed">로그아웃</button>
                 </div>
             </div>
             <div class="HeightPadding"></div>
@@ -61,22 +69,22 @@
                         <h6>작성시간 : 2014-11-19 (1:25)</h6>
                         <p>하위 하위 글 내용이 길면 어떻게 표시될까 궁금해서 적어봅니다.</p>
                         <div class="ItemButtons">
-                            <button class="mainBtnDel AppBtnRed">삭제하기</button>
+                            <button class="mainBtnDel BtnRed">삭제하기</button>
                         </div>
                     </div>
                     <div class="Comment">
                             <input type="text" class="itemTxtComment" placeholder="댓글입력..">
-                            <button class="AppBtnBlue">댓글 달기</button>
+                            <button class="BtnBlue">댓글 달기</button>
                             <div class="Comments">
                                 <div class="CommentItem">
                                     <h4>사용자1</h4>
                                     <p>댓글입니다.</p>
-                                    <button class="AppBtnRed">학제</button>
+                                    <button class="BtnRed">학제</button>
                                 </div>
                                 <div class="CommentItem">
                                     <h4>사용자2</h4>
                                     <p>댓글입니다.</p>
-                                    <button class="AppBtnRed">학제</button>
+                                    <button class="BtnRed">학제</button>
                                 </div>
                             </div>
                         </div>
@@ -88,8 +96,8 @@
                 <div class="NaviPadding">
                 <h2>My SNS Service</h2>
                 <p>안녕하세요, <b>사용자</b>님.</p>
-                <button class="mainBtnWrite AppBtnBlue">글쓰기</button>
-                <button class="mainBtnWrite AppBtnRed">로그아웃</button>
+                <button class="mainBtnWrite BtnBlue">글쓰기</button>
+                <button class="mainBtnWrite BtnRed">로그아웃</button>
                 </div>
             </div>
             <div class="HeightPadding"></div>
@@ -98,8 +106,8 @@
             <p>내용</p>
             <textarea class="writeTextContent" placeholder="내용을 입력하세요"></textarea>
             <div class="ItemButtons">
-                <button class="writeBtnWrite AppBtnBlue">작성하기</button>
-                <button class="writeBtnCancel AppBtnRed">작성취소</button>
+                <button class="writeBtnWrite BtnBlue">작성하기</button>
+                <button class="writeBtnCancel BtnRed">작성취소</button>
             </div>
         </div>
     </div>

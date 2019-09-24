@@ -4,4 +4,15 @@
 	<select id="getMemberList" resultType="com.yjc.stk.domain.MemberVO">
 		select * from yjc_member
 	</select>
+	<select id="login" resultType="com.yjc.stk.domain.MemberVO">
+		select * from yjc_member
+		where member_id=#{member_id}
+	</select>
+	<select id="idSearch" resultType="com.yjc.stk.domain.MemberVO">
+		select * from yjc_member where member_id LIKE #{member_id}
+	</select>
+	
+	<insert id="join" parameterType="com.yjc.stk.domain.MemberVO">
+		insert into yjc_member values(#{member_id},#{member_pw})
+	</insert>
 </mapper>

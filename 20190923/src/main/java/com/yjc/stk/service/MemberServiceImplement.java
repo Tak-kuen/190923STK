@@ -16,9 +16,20 @@ public class MemberServiceImplement implements MemberService {
 	private MemberMapper mapper;
 	@Override
 	public ArrayList<MemberVO> getMemberList() {
-		// TODO Auto-generated method stub
-		System.out.println(mapper.getMemberList());
+		//System.out.println(mapper.getMemberList());
 		return mapper.getMemberList();
+	}
+	@Override
+	public MemberVO login(MemberVO vo) {
+		return mapper.login(vo);
+	}
+	@Override
+	public MemberVO idSearch(MemberVO vo) {
+		return mapper.idSearch(vo);
+	}
+	@Override
+	public int join(MemberVO vo) {
+		return mapper.join(vo);
 	}
 
 }
