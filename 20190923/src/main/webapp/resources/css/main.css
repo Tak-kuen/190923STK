@@ -19,6 +19,15 @@ body {
 	text-align:right;
 	margin-right: 50px;
 }
+
+.Main .NaviPadding {
+	text-align:right;
+	margin-right: 50px;
+}
+.Write .NaviPadding {
+	text-align:right;
+	margin-right: 50px;
+}
 .Login h2 {
 	
 	
@@ -84,7 +93,14 @@ input[type="text"], input[type="password"], textarea {
 .HeightPadding {
     height: 108px;
 }
+.Items {
+	width:800px;
+	margin : 0 auto;
+	padding:0;
+}
 .Item {
+	width: 800px;
+	margin : 0 auto;
     background-color: #FFF;
     border: 1px solid #000;
     border-radius: 5px;
@@ -107,9 +123,14 @@ input[type="text"], input[type="password"], textarea {
     margin-top: 32px;
     text-align: right;
 }
+.itemTxtComment {
+	width:88% !important;
+	padding-left:10px !important;
+}
 .Comment {
     background-color: #FFD771;
     border-top: 1px solid #000;
+    padding-left:15px;
 }
 .Comments {
     border-top:1px dotted #000;
@@ -120,4 +141,28 @@ input[type="text"], input[type="password"], textarea {
 }
 .CommentItem > h4, .CommentItem >p {
     font-size: 14px;
+}
+.WriteItem {
+	width: 800px;
+	margin : 0 auto;
+    background-color: #FFF;
+    border: 1px solid #000;
+    border-radius: 5px;
+    margin-top: 8px;
+    margin-bottom:8px;
+    padding: 5px;
+}
+.WriteItem p{
+	padding-left:10px !important;
+	margin-bottom : 3px;
+}
+.writeTextSubject {
+	width:85% !important;
+	text-align:center !important;
+	margin-bottom:10px !important;
+}
+.writeTextContent {
+	width:85%;
+	margin-bottom:10px !important;
+	resize:vertical;
 }
