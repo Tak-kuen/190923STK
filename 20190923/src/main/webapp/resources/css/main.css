@@ -9,6 +9,9 @@ html,body {
 body {
     background-color: #94B9FC;
 }
+a {
+	text-decoration:none;
+}
 .WebWrap > div {
     display: none;
 }
@@ -142,6 +145,10 @@ input[type="text"], input[type="password"], textarea {
 .CommentItem > h4, .CommentItem >p {
     font-size: 14px;
 }
+.CommentItem .replyDate {
+	text-align : right;
+	padding-right:10px;
+}
 .WriteItem {
 	width: 800px;
 	margin : 0 auto;
@@ -165,4 +172,64 @@ input[type="text"], input[type="password"], textarea {
 	width:85%;
 	margin-bottom:10px !important;
 	resize:vertical;
+}
+
+.Paging {
+	width:800px;
+	height:50px;
+	margin : 0 auto;
+	padding:0;
+	padding-left:46%;
+}
+.Paging a{
+	list-style:none;	
+	display:inline-block;
+	margin-right : 10px;
+}
+.Content {
+	width: 800px;
+	margin : 0 auto;
+	padding: 0;
+	background-color : white;
+	border-radius : 5px;
+	border : solid 1px black;
+}
+.Content .post_title {
+	padding: 10px 5px;
+	padding-left:10px;
+	line-height: 20px;
+	height:20px;
+	background-color: pink;
+}
+.Content .post_date {
+	padding: 10px 5px;
+	padding-left:10px;
+	line-height: 10px;
+	height:10px;
+	background-color: pink;
+	text-align : right;
+}
+
+.Content .post_cont {
+	padding: 10px 5px;
+	padding-left:10px;
+	line-height: 13px;
+	height : 400px;
+	background-color: yellow;
+}
+.Content .file_cont{
+	padding: 10px 5px;
+	padding-left:10px;
+	line-height: 20px;
+	height : 20px;
+	background-color: yellowgreen;
+}
+.post_title_part {
+	display:inline-block;
+	width:690px;
+	
+}
+.post_title_btn {
+	display:inline-block;
+	width:93px;
 }

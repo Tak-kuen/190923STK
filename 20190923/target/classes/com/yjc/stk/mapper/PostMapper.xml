@@ -45,4 +45,18 @@
 		select count(*) tot_page from yjc_post
 		where post_title like '%'||#{keyword}||'%'
 	</select>
+	
+	<select id="postDetail" resultType="map">
+		select post_id,to_char(post_regdate,'yyyy/mm/dd')as post_regdate,
+		to_char(post_moddate,'yyyy/mm/dd')as post_moddate ,
+		post_cont,post_title,post_visit,post_userid,post_ref
+		from yjc_post
+		where post_id = #{post_id}
+	</select>
+	<select id="post_reply" resultType="map">
+		select post_id, post_cont, post_userid,to_char(post_regdate,'yyyy/mm/dd')as
+		post_regdate,to_char(post_moddate,'yyyy/mm/dd')as post_moddate
+		from yjc_post
+		where post_ref = #{post_id}
+	</select>
 </mapper>

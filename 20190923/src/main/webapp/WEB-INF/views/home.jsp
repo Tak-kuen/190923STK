@@ -28,8 +28,8 @@
             	</div>
             </div>
             <div class="HeightPadding"></div>
-            <br/>
-            <div class="BeItems"></div>
+            <div class="Items"></div>
+            <div class="Paging"></div>
             
             
         </div>
@@ -69,22 +69,33 @@
                         </div>
                     </div>
                     <div class="Comment">
-                            <input type="text" class="itemTxtComment" placeholder="댓글입력..">
-                            <button class="BtnBlue">댓글 달기</button>
+                            
                             <div class="Comments">
-                                <div class="CommentItem">
-                                    <h4>사용자1</h4>
-                                    <p>댓글입니다.</p>
-                                    <button class="BtnRed">학제</button>
-                                </div>
-                                <div class="CommentItem">
-                                    <h4>사용자2</h4>
-                                    <p>댓글입니다.</p>
-                                    <button class="BtnRed">학제</button>
-                                </div>
+                                
                             </div>
                         </div>
                 </div>
+            </div>
+            <div class="Paging"></div>
+            <div class="Content">
+            	<div class="post_title">글 제목 들어갈 부분</div>
+           		<div class="post_date">작성일과 수정일</div>
+           		<div class="post_cont">글 내용</div>
+           		<div class="file_cont">파일 내용</div>
+           		<div class="Comments">
+           			<div class="CommentItem">
+						<h4>사용자1</h4>
+						<p>댓글입니다.</p>
+						<button class="BtnRed">학제</button>
+					</div>
+					<div class="CommentItem">
+					<h4>사용자2</h4>
+					<p>댓글입니다.</p>
+					<button class="BtnRed">학제</button>
+					</div>
+					<input type="text" class="itemTxtComment" placeholder="댓글입력..">
+					<button class="BtnBlue">댓글 달기</button>
+				</div>
             </div>
         </div>
         <div class="Write">
@@ -110,6 +121,59 @@
         </div>
     </div>
     <script>
+    function list(page) {
+    	$('.Items').empty();
+    	$('.Paging').empty();
+        $.ajax({
+            type:"post",
+            url:'/stk/load?curPage='+page,
+            /* data : JSON.stringify({curPage : page, keyword : ''}), */
+            contentType: "application/json; charset=UTF-8",
+            success:function(data) {
+            	console.log(data);
+            	//var data=JSON.parse(strdata);
+                //alert(data.result);
+                if(data.result=="success"){
+                    var cnt = data.postlist.length;
+                    for(var i=0; i<cnt;i++) {
+                        var id=data.postlist[i].POST_ID;
+                        var subject=data.postlist[i].POST_TITLE;
+                        var content=data.postlist[i].POST_CONT;
+                        var writer=data.postlist[i].POST_USERID;
+                        var writedate=data.postlist[i].POST_REGDATE;
+                        var moddate = data.postlist[i].POST_MODDATE;
+                        var item=$('<div></div>').attr('data-id',id).addClass('Item');
+                        var itemText=$('<div></div').addClass('ItemText').attr('writer',writer).appendTo(item);
+                        $('<h4></h4>').text(subject).appendTo(itemText);
+                        $('<h6></h6>').text('작성시간 : ' + writedate).appendTo(itemText);
+                        item.appendTo($('.Items'));
+                        //loadComment(id);
+                    }
+                    var pagingParent = $('.Paging');
+                    var toFirst = $('<a></a>').addClass('page-link').attr('href',"javascript:list('1')").html('<span>&lt;&lt;</span>');
+                    toFirst.appendTo(pagingParent);
+                    
+                    for(var i=0; i<data.postPager.blockEnd;i++) {
+                    	var toPage = $('<a></a>').addClass('page-link').attr('href',"javascript:list('"+(i+1)+"')").html('<span>'+(i+1)+'</span>');
+                    	toPage.appendTo(pagingParent);
+                    	console.log('====');
+                    }
+                    var toLast = $('<a></a>').addClass('page-link').attr('href',"javascript:list('"+data.postPager.nextPage+"')").html('<span>&gt;&gt;</span>');
+                    toLast.appendTo(pagingParent);
+                }else {
+                    alert("오류발생");
+                    $('.Main').hide();
+                    $('.Login').show();
+                }
+            },
+            error:function(err) {
+               console.log(err);
+                alert('ajax 오류발생');
+                $('.Main').hide();
+                $('.Login').show();
+            }
+        });
+    }
     $(function() {
         //처음화면은 로그인화면
         var isLogin =$.cookie('curuser');
@@ -117,7 +181,8 @@
         console.log(isLogin);
         
         var loadPostsNot = function() {
-            $('.BeItems').empty();
+            $('.Items').empty();
+            $('.Paging').empty();
             $.ajax({
                 type:"post",
                 url:'/stk/load',
@@ -139,9 +204,19 @@
                             var itemText=$('<div></div').addClass('ItemText').attr('writer',writer).appendTo(item);
                             $('<h4></h4>').text(subject).appendTo(itemText);
                             $('<h6></h6>').text('작성시간 : ' + writedate).appendTo(itemText);
-                            item.appendTo($('.BeItems'));
+                            item.appendTo($('.Items'));
                             //loadComment(id);
                         }
+                        var pagingParent = $('.Paging');
+                        var toFirst = $('<a></a>').addClass('page-link').attr('href',"javascript:list('1')").html('<span>&lt;&lt;</span>');
+                        toFirst.appendTo(pagingParent);
+                        
+                        for(var i=0; i<data.postPager.blockEnd;i++) {
+                        	var toPage = $('<a></a>').addClass('page-link').attr('href',"javascript:list('"+(i+1)+"')").html('<span>'+(i+1)+'</span>');
+                        	toPage.appendTo(pagingParent);
+                        }
+                        var toLast = $('<a></a>').addClass('page-link').attr('href',"javascript:list('"+data.postPager.nextPage+"')").html('<span>&gt;&gt;</span>');
+                        toLast.appendTo(pagingParent);
                     }else {
                         alert("오류발생");
                         $('.Main').hide();
@@ -149,7 +224,7 @@
                     }
                 },
                 error:function(err) {
-                    alert(err);
+                   console.log(err);
                     alert('ajax 오류발생');
                     $('.Main').hide();
                     $('.Login').show();
@@ -159,7 +234,7 @@
         //쿠키정보 확인
         if(isLogin==''||isLogin==null) {
         	$('.Login').show();
-			$('.BeItems').on('click','.Item',function() {
+			$('.Login  .Items').on('click','.Item',function() {
 				alert("로그인하셔야 글을 확인하실 수 있습니다.");
 			});
 			loadPostsNot();
@@ -180,7 +255,7 @@
                         $('.NaviPadding > p').html('안녕하세요, <b>' +$.cookie('curuser') +'</b>님');
                         currentUser =$.cookie('curuser');
                         console.log('로그인 성공');
-                        loadPosts();
+                        loadPostsNot();
                     }
                     else if (data.result=="wrong") {
                         alert('잘못된 비번이나 아디');
@@ -226,7 +301,7 @@
                         $('.NaviPadding > p').html('안녕하세요, <b>' +id +'</b>님');
                         currentUser =id;
                         console.log('로그인 성공');
-                        loadPosts();
+                        loadPostsNot();
                     }
                     else if (data.result=="wrong") {
                         alert('잘못된 비번이나 아디');
@@ -310,7 +385,10 @@
 
         //메인에서 로그아웃버튼
         $('.mainBtnLogout').click(function() {
-            if(confirm('로그아웃?')) location.reload();
+            if(confirm('로그아웃?')) {
+            	$.removeCookie('curuser',{ path: '/' });
+            	location.reload();
+            }
         });
 
         //게시글 작성하기에서 게시글 작성하기(DB에 등록)
@@ -361,7 +439,7 @@
             if(confirm("작성취소?")) {
                 $('.Write').hide();
                 $('.Main').show();
-                loadPosts();
+                loadPostsNot();
             }
         });
 
@@ -417,7 +495,52 @@
             });
         };
         
-
+		$('.Main').on('click','.Item',function() {
+			$('.Content').empty();
+			var parent_node = $('.Content');
+			var post_id = $(this).attr('data-id');
+			console.log(post_id);
+			$.ajax({
+				type:"post",
+                url:"/stk/postDetail",
+                data: JSON.stringify({ post_id:post_id	}),
+                contentType: "application/json; charset=UTF-8",
+                success:function(data) {
+                	if(data.result=="success") {
+                		var post_title = $('<div></div>').addClass('post_title');
+                		$('<div></div>').addClass('post_title_part').text(data.post_title).appendTo(post_title);
+                		if(data.post_userid == currentUser) {
+                			var title_btn=$('<div></div>').addClass('post_title_btn');
+                			$('<button></button>').addClass('BtnRed toRight').text('글 삭제하기').appendTo(title_btn);
+                			title_btn.appendTo(post_title);
+                		}
+                		post_title.appendTo(parent_node);
+                		var post_date = $('<div></div>').addClass('post_date').text('작성일  :  '+ data.post_regdate+'  수정일 : '+data.post_moddate).appendTo(parent_node);
+                		var post_cont = $('<div></div>').addClass('post_cont').text(data.post_cont).appendTo(parent_node);
+                		var file_cont = $('<div></div>').addClass('file_cont').text('파일 드갈곳').appendTo(parent_node);
+                		var comments = $('<div></div>').addClass('Comments');
+                		for(var i=0; i< data.reply.length;i++) {
+                			var commentItem = $('<div></div>').addClass('CommentItem');
+                    		var reply_user = $('<h4></h4>').text(data.reply[i].POST_USERID + '  ||  		' + data.reply[i].POST_REGDATE).appendTo(commentItem);
+                    		var reply_cont = $('<p></p>').text(data.reply[i].POST_CONT).appendTo(commentItem);
+                    		commentItem.appendTo(comments);	
+                		}
+                		$('<input>').attr('type','text').attr('placeholder','댓글을 입력해주세요').addClass('itemTxtComment').appendTo(comments);
+                		$('<button></button>').addClass('BtnBlue').text('댓글 달기').appendTo(comments);
+                		comments.appendTo(parent_node);
+                		console.log('success loading post detail');	
+                	}
+                	else {
+                		console.log("error loading post detail");
+                	}
+                },
+                error:function(err) {
+                    alert("ajax 연결문제");
+                    console.log(err);
+                }
+				
+			});
+		});
         //동적으로 생성된 게시글의 댓글적기버튼에 이벤트를 달아주기
         var isComment = false;
         $(document.body).on('click','.commentBtnWrite',function() {

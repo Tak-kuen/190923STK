@@ -144,5 +144,52 @@ public class PostController {
 		return resultobj.toString();
 	}
 	
+	@ResponseBody
+	@RequestMapping(value = "/commentPost", method = RequestMethod.POST)
+	public String commentPost(@RequestBody Map<String,Object> map) {
+		JSONObject resultobj = new JSONObject();
+		try {
+			postservice.post(map);
+			resultobj.put("result","success");
+		}catch(Exception e) {
+			System.out.println("===========================에러============================");
+			e.printStackTrace();
+			resultobj.put("result","fail");
+		}
+		
+		
+		return resultobj.toString();
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/postDetail", method = RequestMethod.POST, produces = "application/json; charset=utf8")
+	public String postDetail(@RequestBody Map<String,Object> map) {
+		JSONObject resultobj = new JSONObject();
+		try {
+			Map<String,Object> resultmap = new HashMap<>();
+			resultmap=postservice.postDetail((String)map.get("post_id"));
+			System.out.println(postservice.postDetail((String)map.get("post_id")));
+			resultobj.put("post_id",(String)resultmap.get("POST_ID"));
+			resultobj.put("post_regdate",(String)resultmap.get("POST_REGDATE"));
+			resultobj.put("post_title",(String)resultmap.get("POST_TITLE"));
+			resultobj.put("post_visit",resultmap.get("POST_VISIT"));
+			resultobj.put("post_moddate",(String)resultmap.get("POST_MODDATE"));
+			resultobj.put("post_cont",(String)resultmap.get("POST_CONT"));
+			resultobj.put("post_userid",(String)resultmap.get("POST_USERID"));
+			JSONArray replyarr = new JSONArray();
+			replyarr = JSONArray.fromObject(resultmap.get("reply"));
+			resultobj.put("reply",replyarr);
+			
+			resultobj.put("result","success");
+		}catch(Exception e) {
+			System.out.println("===========================에러============================");
+			e.printStackTrace();
+			resultobj.put("result","fail");
+		}
+		
+		
+		return resultobj.toString();
+	}
+	
 	
 }

@@ -46,6 +46,14 @@ public class PostServiceImplement implements PostService {
 		int tot_page=Integer.parseInt(String.valueOf(result.get("TOT_PAGE")));
 		return tot_page;
 	}
+
+	@Override
+	public Map<String, Object> postDetail(String post_id) {
+		Map<String, Object> map = new HashMap<>();
+		map=mapper.postDetail(post_id);
+		map.put("reply",mapper.post_reply(post_id));
+		return map;
+	}
 	
 
 }

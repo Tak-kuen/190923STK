@@ -14,4 +14,7 @@ public interface PostService {
 	// 총 페이지 갯수 가져오기
 		public int totalPage();
 		public int totalPage2(@Param("keyword") String keyword);
+	//글정보 가져오기
+		public Map<String,Object> postDetail(String post_id);
+		
 }
