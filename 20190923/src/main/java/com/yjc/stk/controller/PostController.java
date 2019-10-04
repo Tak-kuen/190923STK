@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -13,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.yjc.stk.domain.PostPager;
+import com.yjc.stk.domain.UploadHandler;
 import com.yjc.stk.service.MemberService;
 import com.yjc.stk.service.PostService;
 
@@ -32,6 +36,8 @@ public class PostController {
 	private static final Logger logger = LoggerFactory.getLogger(PostController.class);
 	private MemberService memservice;
 	private PostService postservice;
+	@Resource(name = "uploadPath")
+	String uploadPath;
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
@@ -188,6 +194,18 @@ public class PostController {
 		}
 		
 		
+		return resultobj.toString();
+	}
+	
+	@RequestMapping(value="/fileUpload.do",method=RequestMethod.POST,produces = "application/json; charset=utf8")
+	@ResponseBody
+	public String fileUpload(MultipartHttpServletRequest multipartRequest) {
+		System.err.println(multipartRequest.getParameter("temp"));
+		String file_path = uploadPath;
+		Map<String,List<String>> fileNames = new UploadHandler(multipartRequest,file_path).getUploadFileName();
+		System.err.println(fileNames.toString());
+		JSONObject resultobj = new JSONObject();
+		resultobj.put("result","success");
 		return resultobj.toString();
 	}
 	

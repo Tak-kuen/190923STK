@@ -9,6 +9,9 @@
 	<link rel="stylesheet" href="<c:url value="/resources/css/main.css"/>" />
 	<script type="text/javascript" src="<c:url value="/resources/js/jquery.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/resources/js/jquery.cookie.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/resources/js/dropzone.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/resources/js/map.js"/>"></script>
+	<script type="text/javascript" src="<c:url value="/resources/js/stringBuffer.js"/>"></script>
 	<%-- <script type="text/javascript" src="<c:url value="/resources/js/main.js"/>"></script> --%>
 </head>
 <body>
@@ -113,6 +116,10 @@
             	<input type="text" class="writeTextSubject" placeholder="제목을 입력하세요" maxlength="50">
             	<p>내용</p>
             	<textarea class="writeTextContent" placeholder="내용을 입력하세요"></textarea>
+            	<div class="outerDropZone">
+            		<br/>
+            		<div id="dZUpload" class="dropzone"></div>
+            	</div>
             	<div class="ItemButtons">
                 	<button class="writeBtnWrite BtnBlue">작성하기</button>
                 	<button class="writeBtnCancel BtnRed">작성취소</button>
