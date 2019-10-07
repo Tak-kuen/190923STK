@@ -6,6 +6,7 @@ import java.util.Map;
 
 public interface PostMapper {
 	public void post(Map<String,Object> map);
+	public void fileUpload(Map<String,Object> map);
 	
 	public ArrayList<Map<String,Object>> allList(Map<String,Object> map);
 	public Map<String,Object> totalPage();

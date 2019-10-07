@@ -89,12 +89,12 @@
            			<div class="CommentItem">
 						<h4>사용자1</h4>
 						<p>댓글입니다.</p>
-						<button class="BtnRed">학제</button>
+						<button class="BtnRed">삭제</button>
 					</div>
 					<div class="CommentItem">
 					<h4>사용자2</h4>
 					<p>댓글입니다.</p>
-					<button class="BtnRed">학제</button>
+					<button class="BtnRed">삭제</button>
 					</div>
 					<input type="text" class="itemTxtComment" placeholder="댓글입력..">
 					<button class="BtnBlue">댓글 달기</button>
@@ -116,18 +116,188 @@
             	<input type="text" class="writeTextSubject" placeholder="제목을 입력하세요" maxlength="50">
             	<p>내용</p>
             	<textarea class="writeTextContent" placeholder="내용을 입력하세요"></textarea>
-            	<div class="outerDropZone">
-            		<br/>
-            		<div id="dZUpload" class="dropzone"></div>
-            	</div>
+            	<p>파일 업로드하기</p>
+            	<div id="fileUpload" class="dragDropDiv">
+					<table id='fileTable'>
+						<tr>
+						<td id='tabFileName'>파일명</td>
+						<td id='tabFileSize'>사이즈</td>
+						<td id='tabFileDel'>삭제 </td>
+						</tr>
+					</table>
+				</div>
+				
             	<div class="ItemButtons">
-                	<button class="writeBtnWrite BtnBlue">작성하기</button>
-                	<button class="writeBtnCancel BtnRed">작성취소</button>
+            		<button onclick="submitFile()" class="BtnBlue">작성하기</button>
+					<button class="writeBtnCancel BtnRed">작성취소</button>
             	</div>
             </div>
         </div>
     </div>
     <script>
+    var fd = new FormData();
+    var map = new Map();
+    var loadPostsNot = function() {
+        $('.Items').empty();
+        $('.Paging').empty();
+        $.ajax({
+            type:"post",
+            url:'/stk/load',
+            contentType: "application/json; charset=UTF-8",
+            success:function(data) {
+            	console.log(data);
+            	//var data=JSON.parse(strdata);
+                //alert(data.result);
+                if(data.result=="success"){
+                    var cnt = data.postlist.length;
+                    for(var i=0; i<cnt;i++) {
+                        var id=data.postlist[i].POST_ID;
+                        var subject=data.postlist[i].POST_TITLE;
+                        var content=data.postlist[i].POST_CONT;
+                        var writer=data.postlist[i].POST_USERID;
+                        var writedate=data.postlist[i].POST_REGDATE;
+                        var moddate = data.postlist[i].POST_MODDATE;
+                        var item=$('<div></div>').attr('data-id',id).addClass('Item');
+                        var itemText=$('<div></div').addClass('ItemText').attr('writer',writer).appendTo(item);
+                        $('<h4></h4>').text(subject).appendTo(itemText);
+                        $('<h6></h6>').text('작성시간 : ' + writedate).appendTo(itemText);
+                        item.appendTo($('.Items'));
+                        //loadComment(id);
+                    }
+                    var pagingParent = $('.Paging');
+                    var toFirst = $('<a></a>').addClass('page-link').attr('href',"javascript:list('1')").html('<span>&lt;&lt;</span>');
+                    toFirst.appendTo(pagingParent);
+                    
+                    for(var i=0; i<data.postPager.blockEnd;i++) {
+                    	var toPage = $('<a></a>').addClass('page-link').attr('href',"javascript:list('"+(i+1)+"')").html('<span>'+(i+1)+'</span>');
+                    	toPage.appendTo(pagingParent);
+                    }
+                    var toLast = $('<a></a>').addClass('page-link').attr('href',"javascript:list('"+data.postPager.nextPage+"')").html('<span>&gt;&gt;</span>');
+                    toLast.appendTo(pagingParent);
+                }else {
+                    alert("오류발생");
+                    $('.Main').hide();
+                    $('.Login').show();
+                }
+            },
+            error:function(err) {
+               console.log(err);
+                alert('ajax 오류발생');
+                $('.Main').hide();
+                $('.Login').show();
+            }
+        });
+    };
+	var isPost=false;
+    function submitFile(post_id) {
+		if(isPost) return false;
+    	if(post_id ==''|| post_id ==null) {
+    		var subject=$('.writeTextSubject').val();
+            var content=$('.writeTextContent').val();
+            if(!subject) {
+                alert("제목입력!");
+                return false;
+            } else if(!content) {
+                alert("내용입력!");
+                return false;
+            }
+            if(confirm("작성?")) {
+            	isPost=true;
+    			fd.append('post_title',subject);
+    			fd.append('post_cont',content);
+    			fd.append('post_userid',$.cookie('curuser'));
+    			sendFileToServer();
+            }
+    	}else {
+    		fd.append('post_id',post_id);
+    	}
+        
+    	
+    }
+	var sendFileToServer = function() {
+		console.log(fd);
+		$.ajax({
+			type:"post",
+			url:"/stk/fileUpload.do",
+			data:fd,
+			contentType:false,
+			processData:false,
+			cache : false,
+			success:function(data) {
+				console.log(data);
+				if(data.result =="success") {
+					console.log('업로드 성공');
+					$('.Write').hide();
+                    $('.Main').show();
+                    loadPostsNot();
+				}else {
+					console.log('컨트롤러 에러');
+				}
+				isPost=false;
+			},error:function(err) {
+				console.log(err);
+				isPost=false;
+			}
+		});
+	}
+	function handleFileUpload(files) {
+		console.log(files);
+		var megaByte = 1024*1024;
+		for(var i=0 ; i<files.length;i++) {
+			if(map.containsValue(files[i].name)==false && (files[i].size/megaByte)<=20) {
+				fd.append(files[i].name,files[i]);
+				map.put(files[i].name,files[i].name);
+				var tag = createFile(files[i].name,files[i].size);
+				$('#fileTable').append(tag);
+			}else {
+				if((files[i].size/megaByte)>20) {
+					alert("20메가 바이트를 초과해 업로드 할 수 없습니다!");
+				}else {
+					alert('중복파일 업로드 입니다.');
+				}
+			}
+		}
+	}
+	function createFile(fileName,fileSize) {
+		var file = {
+			name : fileName,
+			size : fileSize,
+			format : function() {
+				var sizeKB = this.size / 1024;
+					if (parseInt(sizeKB) > 1024) {
+						var sizeMB = sizeKB / 1024;
+						this.size = sizeMB.toFixed(2) + " MB";
+					} else {
+						this.size = sizeKB.toFixed(2) + " KB";
+					}
+					if(name.length > 70){
+					this.name = this.name.substr(0,68)+"...";
+					}
+					return this;
+			},
+			tag : function() {
+				var tag = new StringBuffer();
+				tag.append('<tr>');
+				tag.append('<td>'+this.name+'</td>');
+				tag.append('<td>'+this.size+'</td>');
+				tag.append("<td><button id='"+this.name+"' onclick='delFile(this)'>취소</button></td>");
+				tag.append('</tr>');
+				return tag.toString();                    
+			}
+		}
+		return file.format().tag();
+	}
+	function delFile(e) {
+		//선택한 창의 아이디가 파일의 form name이므로 아이디를 받아온다.
+		var formName = e.id;
+		//form에서 데이터를 삭제한다.
+		fd.delete(formName);
+		//맵에서도 올린 파일의 정보를 삭제한다.
+		map.remove(formName);
+		// tr을 삭제하기 위해
+		$(e).parents('tr').remove();
+	}
+	
     function list(page) {
     	$('.Items').empty();
     	$('.Paging').empty();
@@ -184,60 +354,7 @@
     $(function() {
         //처음화면은 로그인화면
         var isLogin =$.cookie('curuser');
-        
         console.log(isLogin);
-        
-        var loadPostsNot = function() {
-            $('.Items').empty();
-            $('.Paging').empty();
-            $.ajax({
-                type:"post",
-                url:'/stk/load',
-                contentType: "application/json; charset=UTF-8",
-                success:function(data) {
-                	console.log(data);
-                	//var data=JSON.parse(strdata);
-                    //alert(data.result);
-                    if(data.result=="success"){
-                        var cnt = data.postlist.length;
-                        for(var i=0; i<cnt;i++) {
-                            var id=data.postlist[i].POST_ID;
-                            var subject=data.postlist[i].POST_TITLE;
-                            var content=data.postlist[i].POST_CONT;
-                            var writer=data.postlist[i].POST_USERID;
-                            var writedate=data.postlist[i].POST_REGDATE;
-                            var moddate = data.postlist[i].POST_MODDATE;
-                            var item=$('<div></div>').attr('data-id',id).addClass('Item');
-                            var itemText=$('<div></div').addClass('ItemText').attr('writer',writer).appendTo(item);
-                            $('<h4></h4>').text(subject).appendTo(itemText);
-                            $('<h6></h6>').text('작성시간 : ' + writedate).appendTo(itemText);
-                            item.appendTo($('.Items'));
-                            //loadComment(id);
-                        }
-                        var pagingParent = $('.Paging');
-                        var toFirst = $('<a></a>').addClass('page-link').attr('href',"javascript:list('1')").html('<span>&lt;&lt;</span>');
-                        toFirst.appendTo(pagingParent);
-                        
-                        for(var i=0; i<data.postPager.blockEnd;i++) {
-                        	var toPage = $('<a></a>').addClass('page-link').attr('href',"javascript:list('"+(i+1)+"')").html('<span>'+(i+1)+'</span>');
-                        	toPage.appendTo(pagingParent);
-                        }
-                        var toLast = $('<a></a>').addClass('page-link').attr('href',"javascript:list('"+data.postPager.nextPage+"')").html('<span>&gt;&gt;</span>');
-                        toLast.appendTo(pagingParent);
-                    }else {
-                        alert("오류발생");
-                        $('.Main').hide();
-                        $('.Login').show();
-                    }
-                },
-                error:function(err) {
-                   console.log(err);
-                    alert('ajax 오류발생');
-                    $('.Main').hide();
-                    $('.Login').show();
-                }
-            });
-        };
         //쿠키정보 확인
         if(isLogin==''||isLogin==null) {
         	$('.Login').show();
@@ -397,50 +514,6 @@
             	location.reload();
             }
         });
-
-        //게시글 작성하기에서 게시글 작성하기(DB에 등록)
-        var isPost=false;
-        $('.writeBtnWrite').click(function() {
-            if(isPost) return false;
-            var subject=$('.writeTextSubject').val();
-            var content=$('.writeTextContent').val();
-            if(!subject) {
-                alert("제목입력!");
-                return false;
-            } else if(!content) {
-                alert("내용입력!");
-                return false;
-            }
-            if(confirm("작성?")) {
-                isPost=true;
-                $.ajax({
-                    type:"post",
-                    url:"/stk/post",
-                    data: JSON.stringify({
-                        post_title:subject,
-                        post_cont : content,
-                        post_userid: currentUser
-                    }),
-                    contentType: "application/json; charset=UTF-8",
-                    success:function(strdata) {
-                    	var data = JSON.parse(strdata);
-                        if(data.result=="success") {
-                            $('.Write').hide();
-                            $('.Main').show();
-                            loadPosts();
-                        }else { alert("오류발생");}
-                        isPost=false;
-                    },
-                    error:function(err) {
-                        alert("ajax 연결문제");
-                        console.log(err);
-                        isPost=false;
-                    }
-                });
-            }
-
-        });
-
         //게시글 작성창에서 작성취소 하기
         $('.writeBtnCancel').click(function() {
             if(confirm("작성취소?")) {
@@ -449,59 +522,6 @@
                 loadPostsNot();
             }
         });
-
-        //모든 게시글을 불러와주는 메소드
-        var loadPosts = function() {
-            $('.Items').empty();
-            $.ajax({
-                type:"post",
-                url:'/stk/load',
-                contentType: "application/json; charset=UTF-8",
-                success:function(data) {
-                	console.log(data);
-                	//var data=JSON.parse(strdata);
-                    //alert(data.result);
-                    if(data.result=="success"){
-                        var cnt = data.postlist.length;
-                        for(var i=0; i<cnt;i++) {
-                            var id=data.postlist[i].POST_ID;
-                            var subject=data.postlist[i].POST_TITLE;
-                            var content=data.postlist[i].POST_CONT;
-                            var writer=data.postlist[i].POST_USERID;
-                            var writedate=data.postlist[i].POST_REGDATE;
-                            var moddate = data.postlist[i].POST_MODDATE;
-                            var item=$('<div></div>').attr('data-id',id).addClass('Item');
-                            var itemText=$('<div></div').addClass('ItemText').attr('writer',writer).appendTo(item);
-                            $('<h4></h4>').text(subject).appendTo(itemText);
-                            $('<h6></h6>').text('작성시간 : ' + writedate).appendTo(itemText);
-                            $('<p></p>').text(content).appendTo(itemText);
-                            if(writer==currentUser){
-                                var itemButtons=$('<div></div>').addClass('ItemButtons').appendTo(itemText);
-                                $('<button></button>').addClass('mainBtnDel BtnRed').text('삭제하기').appendTo(itemButtons);
-                            }
-                            var comment = $('<div></div>').addClass('Comment').appendTo(item);
-                            $('<input />').attr({type:'text',placeholder:'댓글입력..'}).addClass('itemTxtComment').appendTo(comment);
-                            $('<button></button>').addClass('commentBtnWrite BtnBlue').text('댓글달기').appendTo(comment);
-        
-                            $('<div></div>').addClass('Comments').appendTo(comment);
-                            item.appendTo($('.Items'));
-                            //loadComment(id);
-                        }
-                    }else {
-                        alert("오류발생");
-                        $('.Main').hide();
-                        $('.Login').show();
-                    }
-                },
-                error:function(err) {
-                    alert(err);
-                    alert('ajax 오류발생');
-                    $('.Main').hide();
-                    $('.Login').show();
-                }
-            });
-        };
-        
 		$('.Main').on('click','.Item',function() {
 			$('.Content').empty();
 			var parent_node = $('.Content');
@@ -672,6 +692,23 @@
         });
         //$('.Main').show(); 
         //$('.Write').show();
+        var dragDrop = $('.dragDropDiv');
+        $('.dragDropDiv').on('dragover',function(e) {
+        	e.stopPropagation();
+        	e.preventDefault();
+        	$(this).css('border','2px solid red');
+        });
+        $('.dragDropDiv').on('drop',function(e) {
+        	$(this).css('2px solid green');
+        	e.preventDefault();
+        	var files = e.originalEvent.dataTransfer.files;
+        	handleFileUpload(files);
+        });
+		$(document).on('dragover', function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			dragDrop.css('border', '2px solid green');
+		});
     });
     </script>
 </body>

@@ -233,3 +233,27 @@ input[type="text"], input[type="password"], textarea {
 	display:inline-block;
 	width:93px;
 }
+.dragDropDiv {
+    width: 670px;
+    height: 200px;
+    text-align: center;
+    padding: 10px 0px 10px 10px;
+    border: 2px solid green;
+}
+#tabFileName{
+    width: 470px;
+    text-align: center;
+}
+#tabFileSize{
+    width: 110px;
+    text-align: center;
+}
+#tabFileDel{
+    width: 70px;
+    text-align: center;
+}
+table , tr , td{
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding-left:5px;
+}

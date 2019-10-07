@@ -17,8 +17,9 @@ public class PostServiceImplement implements PostService {
 
 	private PostMapper mapper;
 	@Override
-	public void post(Map<String, Object> map) {
+	public String post(Map<String, Object> map) {
 		mapper.post(map);
+		return (String)map.get("post_id");
 	}
 	
 	@Override
@@ -53,6 +54,11 @@ public class PostServiceImplement implements PostService {
 		map=mapper.postDetail(post_id);
 		map.put("reply",mapper.post_reply(post_id));
 		return map;
+	}
+
+	@Override
+	public void fileUpload(Map<String, Object> map) {
+		mapper.fileUpload(map);
 	}
 	
 

@@ -16,9 +16,17 @@
 	</sql>
 
 	<insert id="post" parameterType="Map">
+		<selectKey keyProperty="post_id" resultType="String" order="BEFORE">
+			select concat(to_char(sysdate,'yymmdd'),to_char(post_id_seq.NEXTVAL,'FM0000')) from dual 
+		</selectKey>
 		insert into
 		yjc_post(post_id,post_title,post_cont,post_userid)
-		values(concat(to_char(sysdate,'yymmdd'),to_char(post_id_seq.NEXTVAL,'FM0000')),#{post_title},#{post_cont},#{post_userid})
+		values(#{post_id},#{post_title},#{post_cont},#{post_userid})
+	</insert>
+	<insert id="fileUpload" parameterType="Map">
+		insert into
+		yjc_file(post_id,file_id,file_path)
+		values(#{post_id},concat(to_char(sysdate,'yymmdd'),to_char(file_id_seq.NEXTVAL,'FM0000')),#{file_path})
 	</insert>
 	
 	<select id="allList" resultType="map" parameterType="map">

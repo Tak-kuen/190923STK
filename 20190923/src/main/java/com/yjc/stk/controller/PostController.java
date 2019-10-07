@@ -79,26 +79,6 @@ public class PostController {
 		//글을 전부다 불러온다
 		//댓글을 확인한다(ref가 있으면 다 댓글)
 		//파일들을 불러온다 (post_id 별로 분류)
-		
-		//=========최종 예정============
-		//	post = {
-		//		post_id : 'df',
-		//		post_cont : 'dfdfdf',
-		//		post_visit : 2323,
-		//		post_userid: 'dfdf',
-		//		reply : [댓글1{
-		//					post_id :'댓글 아디',
-		//					post_cont: '댓글 내용',
-		//					post_userid : '댓글 작성자',
-		//					post_regdate : '댓글 작성일자',
-		//					post_moddate: '댓글 수정일자'
-		//				},댓글2{}],
-		//		post_regdate : '게시글 작성일자',
-		//		post_moddate : '게시글 수정일자',
-		//		post_file : [ {file_id : '파일 아이디', file_path:'파일 경로'},{}]
-		//	}
-		//
-		
 		//모집공고 컨트롤러
 //		@RequestMapping(value = "/announce")
 //		public String recruit(Model model,@RequestParam(defaultValue="1") int post_class,
@@ -200,12 +180,51 @@ public class PostController {
 	@RequestMapping(value="/fileUpload.do",method=RequestMethod.POST,produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String fileUpload(MultipartHttpServletRequest multipartRequest) {
-		System.err.println(multipartRequest.getParameter("temp"));
-		String file_path = uploadPath;
-		Map<String,List<String>> fileNames = new UploadHandler(multipartRequest,file_path).getUploadFileName();
-		System.err.println(fileNames.toString());
+		System.err.println(multipartRequest.getParameter("post_title"));
+		System.err.println(multipartRequest.getParameter("post_cont"));
+		System.err.println(multipartRequest.getParameter("post_userid"));
 		JSONObject resultobj = new JSONObject();
-		resultobj.put("result","success");
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("post_title",(String)multipartRequest.getParameter("post_title"));
+		map.put("post_cont",(String)multipartRequest.getParameter("post_cont"));
+		map.put("post_userid",(String)multipartRequest.getParameter("post_userid"));
+		try {
+			
+			String file_path = uploadPath;
+			String post_id = postservice.post(map);
+			System.err.println(post_id);
+			Map<String,List<String>> fileNames = new UploadHandler(multipartRequest,file_path).getUploadFileName();
+			//=========최종 예정============
+			//	post = {
+			//		post_id : 'df',
+			//		post_cont : 'dfdfdf',
+			//		post_visit : 2323,
+			//		post_userid: 'dfdf',
+			//		reply : [댓글1{
+			//					post_id :'댓글 아디',
+			//					post_cont: '댓글 내용',
+			//					post_userid : '댓글 작성자',
+			//					post_regdate : '댓글 작성일자',
+			//					post_moddate: '댓글 수정일자'
+			//				},댓글2{}],
+			//		post_regdate : '게시글 작성일자',
+			//		post_moddate : '게시글 수정일자',
+			//		post_file : [ {file_id : '파일 아이디', file_path:'파일 경로'},{}]
+			//	}
+			//
+			for(String fileName:fileNames.get("file_origins")) {
+				Map<String,Object> fileMap = new HashMap<String,Object>();
+				fileMap.put("post_id",post_id);
+				fileMap.put("file_path",fileName);
+				postservice.fileUpload(fileMap);
+			}
+			System.err.println(fileNames.toString());
+			resultobj.put("result","success");
+		}catch(Exception e) {
+			System.out.println("===========================에러============================");
+			e.printStackTrace();
+			resultobj.put("result","fail");
+		}
 		return resultobj.toString();
 	}
 	
