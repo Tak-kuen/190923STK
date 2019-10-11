@@ -25,8 +25,8 @@
 	</insert>
 	<insert id="fileUpload" parameterType="Map">
 		insert into
-		yjc_file(post_id,file_id,file_path)
-		values(#{post_id},concat(to_char(sysdate,'yymmdd'),to_char(file_id_seq.NEXTVAL,'FM0000')),#{file_path})
+		yjc_file(post_id,file_id,file_path,file_origin)
+		values(#{post_id},concat(to_char(sysdate,'yymmdd'),to_char(file_id_seq.NEXTVAL,'FM0000')),#{file_path},#{file_origin})
 	</insert>
 	
 	<select id="allList" resultType="map" parameterType="map">
@@ -66,5 +66,9 @@
 		post_regdate,to_char(post_moddate,'yyyy/mm/dd')as post_moddate
 		from yjc_post
 		where post_ref = #{post_id}
+	</select>
+	<select id="fileFind" resultType="map">
+		select * from yjc_file
+		where post_id=#{post_id}
 	</select>
 </mapper>

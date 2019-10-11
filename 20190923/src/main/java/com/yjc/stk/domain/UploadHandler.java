@@ -110,7 +110,7 @@ public class UploadHandler {
     //다운 생성자
     public UploadHandler(HttpServletResponse response,String file_path,String saveName,String oldName) {
     	this.response = response;
-    	this.file_path = file_path + "saveName";
+    	this.file_path = file_path + "/"+saveName;
     	this.oldName = oldName;
     }
     

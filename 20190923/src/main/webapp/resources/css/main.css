@@ -173,6 +173,12 @@ input[type="text"], input[type="password"], textarea {
 	margin-bottom:10px !important;
 	resize:vertical;
 }
+.updateContent {
+	width:770px;
+	height:390px;
+	margin-bottom:10px !important;
+	resize:vertical;
+}
 
 .Paging {
 	width:800px;
@@ -221,12 +227,14 @@ input[type="text"], input[type="password"], textarea {
 	padding: 10px 5px;
 	padding-left:10px;
 	line-height: 20px;
-	height : 20px;
 	background-color: yellowgreen;
+}
+.file_cont .FileItems {
+	margin-top : 5px;
 }
 .post_title_part {
 	display:inline-block;
-	width:690px;
+	width:605px;
 	
 }
 .post_title_btn {

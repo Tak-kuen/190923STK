@@ -145,3 +145,100 @@
         }
 
     });
+    var isComment = false;
+    $(document.body).on('click','.commentBtnWrite',function() {
+        if(isComment) return false;
+        var parentId=$(this).parent().parent().attr('data-id');
+        var content=$(this).prev().val();
+        var comments=$(this).next();
+        console.log(parentId +"");
+        console.log(content);
+        console.log(comments);
+        if(!content){ alert("댓글!"); return false;}
+        isComment=true;
+        $.ajax({
+            type:"post",
+            url:"/stk/commentPost",
+            data:JSON.stringify({
+                parentId:parentId,
+                content:content,
+                writer:currentUser
+            }),
+            contentType: "application/json; charset=UTF-8",
+            success: function(strdata) {
+            	var data = JSON.parse(strdata);
+                if(data.result=="success"){
+                    var lid=data.lastId;
+                    var commentItem = $('<div></div>').addClass('CommentItem').attr('data-id',lid);
+                    $('<h4></h4>').text(currentUser).appendTo(commentItem);
+                    $('<p></p>').text(content).appendTo(commentItem);
+                    $('<button></button>').addClass('BtnRed commentBtnDel').text('삭제').appendTo(commentItem);
+                    commentItem.appendTo(comments);
+                }else{ alert('오류발생');    }
+                isComment=false;
+            },error:function() {
+                alert('ajax 연결문제');
+                isComment=false;
+            }
+        });
+    });
+
+
+    //각 게시글의 댓글 불러오는 메소드
+    var loadComment=function(postId){
+        if(!postId) return false;
+        var target= $('div.Item[data-id='+postId+'] .Comments');
+        $.ajax({
+            type:"post",
+            url:"/stk/commentLoad",
+            data:JSON.stringify({
+                postId:postId
+            }),
+            contentType: "application/json; charset=UTF-8",
+            success:function(strdata) {
+            	var data = JSON.parse(strdata);
+                if(data.result=="success"){
+                    var cnt=data.data.length;
+                    for(var i=0;i<cnt;i++) {
+                        var id=data.data[i].cno;
+                        var content=data.data[i].ccontent;
+                        var writer=data.data[i].cwriter;
+                        var commentItem = $('<div></div>').addClass('CommentItem').attr('data-id',id);
+                        $('<h4></h4>').text(writer).appendTo(commentItem);
+                        $('<p></p>').text(content).appendTo(commentItem);
+                        if($('body > div > div.Main > div.Navi > div > p > b').text()==writer) {
+                            $('<button></button>').addClass('AppBtnRed commentBtnDel').text('삭제').appendTo(commentItem);
+                        }
+                        commentItem.appendTo(target);
+                    }   
+                }else{ alert('오류발생');    }
+            },error:function() {
+                alert('ajax 연결문제');
+            }
+        });
+    };
+
+    //동적으로 생성된 게시글의 댓글 삭제하기 버튼에 이벤트 달아주기
+    $(document.body).on('click','.commentBtnDel',function() {
+        if(confirm('삭제?')) {
+            var id=$(this).parent().attr('data-id');
+            var removeTarget=$(this).parent();
+            $.ajax({
+                type:"post",
+                url:"/stk/commentDel",
+                data:JSON.stringify({
+                    postId:id
+                }),
+                contentType: "application/json; charset=UTF-8",
+                success:function(strdata) {
+                	var data = JSON.parse(strdata);
+                    if(data.result=="success") {
+                        removeTarget.remove();
+                    }else{ alert("오류발생"); }
+                },
+                error:function() {
+                    alert("ajax오류 발생");
+                }
+            });
+        }
+    });

@@ -13,4 +13,5 @@ public interface PostMapper {
 	public Map<String,Object> totalPage2(Map<String,Object> map);
 	public Map<String,Object> postDetail(String post_id);
 	public List<Map<String,Object>> post_reply(String post_id);
+	public List<Map<String,Object>> fileFind(String post_id);
 }

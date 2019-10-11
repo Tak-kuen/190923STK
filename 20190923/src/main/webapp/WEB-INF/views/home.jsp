@@ -126,7 +126,6 @@
 						</tr>
 					</table>
 				</div>
-				
             	<div class="ItemButtons">
             		<button onclick="submitFile()" class="BtnBlue">작성하기</button>
 					<button class="writeBtnCancel BtnRed">작성취소</button>
@@ -209,7 +208,22 @@
     			sendFileToServer();
             }
     	}else {
+    		console.log('submitFile로 제대로 왔다');
     		fd.append('post_id',post_id);
+    		var subject2 = $('.update_title').val();
+    		console.log(subject2);
+    		var content2 = $('.update_cont').val();
+    		if(!subject2) {
+                alert("제목입력!");
+                return false;
+            } else if(!content2) {
+                alert("내용입력!");
+                return false;
+            }
+    		if(confirm("수정?")) {
+    			alert('ㅇㅇ');
+    			$('#'+post_id).parent().find('.Comments').show();
+    		}
     	}
         
     	
@@ -534,17 +548,25 @@
                 contentType: "application/json; charset=UTF-8",
                 success:function(data) {
                 	if(data.result=="success") {
-                		var post_title = $('<div></div>').addClass('post_title');
+                		var post_title = $('<div></div>').addClass('post_title').attr('id',post_id);
                 		$('<div></div>').addClass('post_title_part').text(data.post_title).appendTo(post_title);
                 		if(data.post_userid == currentUser) {
                 			var title_btn=$('<div></div>').addClass('post_title_btn');
-                			$('<button></button>').addClass('BtnRed toRight').text('글 삭제하기').appendTo(title_btn);
-                			title_btn.appendTo(post_title);
+                			$('<button></button>').addClass('BtnRed toRight PostDelete').text('글 삭제하기').appendTo(post_title);
+                			$('<button></button>').addClass('BtnBlue toRight PostUpdate').text('글 수정하기').appendTo(post_title);
+                			//title_btn.appendTo($('.post_title_part'));
                 		}
                 		post_title.appendTo(parent_node);
                 		var post_date = $('<div></div>').addClass('post_date').text('작성일  :  '+ data.post_regdate+'  수정일 : '+data.post_moddate).appendTo(parent_node);
                 		var post_cont = $('<div></div>').addClass('post_cont').text(data.post_cont).appendTo(parent_node);
-                		var file_cont = $('<div></div>').addClass('file_cont').text('파일 드갈곳').appendTo(parent_node);
+                		var file_cont = $('<div></div>').addClass('file_cont').text('첨부파일');
+                		console.log(data.files);
+                		for(var i=0; i<data.files.length;i++) {
+                			var fileItem = $('<div></div>').addClass('FileItems');
+                			$('<a></a>').attr("href",'/stk/fileDownload.do?saveName='+data.files[i].FILE_PATH+'&oldName='+data.files[i].FILE_ORIGIN).text(data.files[i].FILE_ORIGIN).addClass('FileItem').appendTo(fileItem);
+                			fileItem.appendTo(file_cont);
+                		}
+                		file_cont.appendTo(parent_node)
                 		var comments = $('<div></div>').addClass('Comments');
                 		for(var i=0; i< data.reply.length;i++) {
                 			var commentItem = $('<div></div>').addClass('CommentItem');
@@ -555,6 +577,7 @@
                 		$('<input>').attr('type','text').attr('placeholder','댓글을 입력해주세요').addClass('itemTxtComment').appendTo(comments);
                 		$('<button></button>').addClass('BtnBlue').text('댓글 달기').appendTo(comments);
                 		comments.appendTo(parent_node);
+                		
                 		console.log('success loading post detail');	
                 	}
                 	else {
@@ -569,102 +592,29 @@
 			});
 		});
         //동적으로 생성된 게시글의 댓글적기버튼에 이벤트를 달아주기
-        var isComment = false;
-        $(document.body).on('click','.commentBtnWrite',function() {
-            if(isComment) return false;
-            var parentId=$(this).parent().parent().attr('data-id');
-            var content=$(this).prev().val();
-            var comments=$(this).next();
-            console.log(parentId +"");
-            console.log(content);
-            console.log(comments);
-            if(!content){ alert("댓글!"); return false;}
-            isComment=true;
-            $.ajax({
-                type:"post",
-                url:"/stk/commentPost",
-                data:JSON.stringify({
-                    parentId:parentId,
-                    content:content,
-                    writer:currentUser
-                }),
-                contentType: "application/json; charset=UTF-8",
-                success: function(strdata) {
-                	var data = JSON.parse(strdata);
-                    if(data.result=="success"){
-                        var lid=data.lastId;
-                        var commentItem = $('<div></div>').addClass('CommentItem').attr('data-id',lid);
-                        $('<h4></h4>').text(currentUser).appendTo(commentItem);
-                        $('<p></p>').text(content).appendTo(commentItem);
-                        $('<button></button>').addClass('BtnRed commentBtnDel').text('삭제').appendTo(commentItem);
-                        commentItem.appendTo(comments);
-                    }else{ alert('오류발생');    }
-                    isComment=false;
-                },error:function() {
-                    alert('ajax 연결문제');
-                    isComment=false;
-                }
-            });
-        });
-
-
-        //각 게시글의 댓글 불러오는 메소드
-        var loadComment=function(postId){
-            if(!postId) return false;
-            var target= $('div.Item[data-id='+postId+'] .Comments');
-            $.ajax({
-                type:"post",
-                url:"/stk/commentLoad",
-                data:JSON.stringify({
-                    postId:postId
-                }),
-                contentType: "application/json; charset=UTF-8",
-                success:function(strdata) {
-                	var data = JSON.parse(strdata);
-                    if(data.result=="success"){
-                        var cnt=data.data.length;
-                        for(var i=0;i<cnt;i++) {
-                            var id=data.data[i].cno;
-                            var content=data.data[i].ccontent;
-                            var writer=data.data[i].cwriter;
-                            var commentItem = $('<div></div>').addClass('CommentItem').attr('data-id',id);
-                            $('<h4></h4>').text(writer).appendTo(commentItem);
-                            $('<p></p>').text(content).appendTo(commentItem);
-                            if($('body > div > div.Main > div.Navi > div > p > b').text()==writer) {
-                                $('<button></button>').addClass('AppBtnRed commentBtnDel').text('삭제').appendTo(commentItem);
-                            }
-                            commentItem.appendTo(target);
-                        }   
-                    }else{ alert('오류발생');    }
-                },error:function() {
-                    alert('ajax 연결문제');
-                }
-            });
-        };
-
-        //동적으로 생성된 게시글의 댓글 삭제하기 버튼에 이벤트 달아주기
-        $(document.body).on('click','.commentBtnDel',function() {
-            if(confirm('삭제?')) {
-                var id=$(this).parent().attr('data-id');
-                var removeTarget=$(this).parent();
-                $.ajax({
-                    type:"post",
-                    url:"/stk/commentDel",
-                    data:JSON.stringify({
-                        postId:id
-                    }),
-                    contentType: "application/json; charset=UTF-8",
-                    success:function(strdata) {
-                    	var data = JSON.parse(strdata);
-                        if(data.result=="success") {
-                            removeTarget.remove();
-                        }else{ alert("오류발생"); }
-                    },
-                    error:function() {
-                        alert("ajax오류 발생");
-                    }
-                });
-            }
+        var isPostUpdate =false;
+        $(document.body).on('click','.PostUpdate',function() {
+        	if(isPostUpdate) {
+        		if(confirm('수정하시겠습니까?')) {
+        			var post_id = $(this).parent().attr('id');
+        			submitFile(post_id);
+					isPostUpdate=false;
+        		}
+        		
+        	}else {
+        		var parent_node= $(this).parent().parent();
+            	var post_id = $(this).parent().attr('id');
+            	var title_part= $('#'+post_id).find('.post_title_part');
+            	var title_temp = title_part.text();
+            	title_part.html('<input type="text" class="update_title" value="'+title_temp+'"/>');
+            	var cont_part = parent_node.find('.post_cont');
+            	var cont_temp = cont_part.text();
+            	cont_part.html('<textarea class="update_cont updateContent">'+cont_temp+'</textarea>');
+            	parent_node.find('.Comments').hide();
+            	isPostUpdate=true;
+        	}
+        	
+        	
         });
 
         //동적으로 생성된 게시글의 삭제하기 버튼에 이벤트 달아주기

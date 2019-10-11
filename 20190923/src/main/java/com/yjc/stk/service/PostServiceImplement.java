@@ -60,6 +60,13 @@ public class PostServiceImplement implements PostService {
 	public void fileUpload(Map<String, Object> map) {
 		mapper.fileUpload(map);
 	}
+
+	@Override
+	public Map<String, Object> fileFind(String post_id) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("files",mapper.fileFind(post_id));
+		return map;
+	}
 	
 
 }

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,7 +156,7 @@ public class PostController {
 		try {
 			Map<String,Object> resultmap = new HashMap<>();
 			resultmap=postservice.postDetail((String)map.get("post_id"));
-			System.out.println(postservice.postDetail((String)map.get("post_id")));
+			//System.out.println(postservice.postDetail((String)map.get("post_id")));
 			resultobj.put("post_id",(String)resultmap.get("POST_ID"));
 			resultobj.put("post_regdate",(String)resultmap.get("POST_REGDATE"));
 			resultobj.put("post_title",(String)resultmap.get("POST_TITLE"));
@@ -165,7 +167,12 @@ public class PostController {
 			JSONArray replyarr = new JSONArray();
 			replyarr = JSONArray.fromObject(resultmap.get("reply"));
 			resultobj.put("reply",replyarr);
-			
+			resultmap.clear();
+			resultmap = postservice.fileFind((String)map.get("post_id"));
+			JSONArray filearr = new JSONArray();
+			System.out.println(filearr.toString());
+			filearr = JSONArray.fromObject(resultmap.get("files"));
+			resultobj.put("files",filearr);
 			resultobj.put("result","success");
 		}catch(Exception e) {
 			System.out.println("===========================에러============================");
@@ -212,12 +219,22 @@ public class PostController {
 			//		post_file : [ {file_id : '파일 아이디', file_path:'파일 경로'},{}]
 			//	}
 			//
-			for(String fileName:fileNames.get("file_origins")) {
-				Map<String,Object> fileMap = new HashMap<String,Object>();
+			Map<String,Object> fileMap = new HashMap<String,Object>();
+//			for(String fileName:fileNames.get("file_origins")) {
+//				fileMap.put("post_id",post_id);
+//				fileMap.put("file_path",fileName);
+//				for(String oldName:fileNames.get("file_paths")) {
+//					fileMap.put("file_origin",oldName);
+//				}
+//				postservice.fileUpload(fileMap);
+//			}
+			for(int i =0; i<fileNames.get("file_origins").size();i++) {
 				fileMap.put("post_id",post_id);
-				fileMap.put("file_path",fileName);
+				fileMap.put("file_path",fileNames.get("file_origins").get(i));
+				fileMap.put("file_origin",fileNames.get("file_paths").get(i));
 				postservice.fileUpload(fileMap);
 			}
+			
 			System.err.println(fileNames.toString());
 			resultobj.put("result","success");
 		}catch(Exception e) {
@@ -226,6 +243,13 @@ public class PostController {
 			resultobj.put("result","fail");
 		}
 		return resultobj.toString();
+	}
+	@RequestMapping(value="/fileDownload.do")
+	@ResponseBody
+	public byte[] fileDownload(HttpServletResponse resp,@RequestParam("saveName") String saveName,@RequestParam("oldName") String oldName) {
+		String filePath = uploadPath;
+		System.out.println(saveName + "||||" + oldName);
+		return new UploadHandler(resp, filePath, saveName, oldName).getDownloadFileByte();
 	}
 	
 	
