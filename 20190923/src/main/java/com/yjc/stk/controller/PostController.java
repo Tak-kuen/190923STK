@@ -156,7 +156,7 @@ public class PostController {
 		try {
 			Map<String,Object> resultmap = new HashMap<>();
 			resultmap=postservice.postDetail((String)map.get("post_id"));
-			//System.out.println(postservice.postDetail((String)map.get("post_id")));
+			System.out.println((String)map.get("post_id"));
 			resultobj.put("post_id",(String)resultmap.get("POST_ID"));
 			resultobj.put("post_regdate",(String)resultmap.get("POST_REGDATE"));
 			resultobj.put("post_title",(String)resultmap.get("POST_TITLE"));
@@ -170,8 +170,8 @@ public class PostController {
 			resultmap.clear();
 			resultmap = postservice.fileFind((String)map.get("post_id"));
 			JSONArray filearr = new JSONArray();
-			System.out.println(filearr.toString());
 			filearr = JSONArray.fromObject(resultmap.get("files"));
+			System.out.println(filearr.toString());
 			resultobj.put("files",filearr);
 			resultobj.put("result","success");
 		}catch(Exception e) {

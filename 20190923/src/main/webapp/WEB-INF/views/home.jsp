@@ -187,6 +187,60 @@
             }
         });
     };
+    function postDetail(post_id) {
+		$('.Content').empty();
+		var parent_node = $('.Content');
+		console.log(post_id);
+		$.ajax({
+			type:"post",
+            url:"/stk/postDetail",
+            data: JSON.stringify({ post_id:post_id	}),
+            contentType: "application/json; charset=UTF-8",
+            success:function(data) {
+            	if(data.result=="success") {
+            		var post_title = $('<div></div>').addClass('post_title').attr('id',post_id);
+            		$('<div></div>').addClass('post_title_part').text(data.post_title).appendTo(post_title);
+            		if(data.post_userid == $.cookie('curuser')) {
+            			var title_btn=$('<div></div>').addClass('post_title_btn');
+            			$('<button></button>').addClass('BtnRed toRight PostDelete').text('글 삭제하기').appendTo(post_title);
+            			$('<button></button>').addClass('BtnBlue toRight PostUpdate').text('글 수정하기').appendTo(post_title);
+            			//title_btn.appendTo($('.post_title_part'));
+            		}
+            		post_title.appendTo(parent_node);
+            		var post_date = $('<div></div>').addClass('post_date').text('작성일  :  '+ data.post_regdate+'  수정일 : '+data.post_moddate).appendTo(parent_node);
+            		var post_cont = $('<div></div>').addClass('post_cont').text(data.post_cont).appendTo(parent_node);
+            		var file_cont = $('<div></div>').addClass('file_cont').text('첨부파일');
+            		console.log(data.files);
+            		for(var i=0; i<data.files.length;i++) {
+            			var fileItem = $('<div></div>').addClass('FileItems');
+            			$('<a></a>').attr("href",'/stk/fileDownload.do?saveName='+data.files[i].FILE_PATH+'&oldName='+data.files[i].FILE_ORIGIN).text(data.files[i].FILE_ORIGIN).addClass('FileItem').appendTo(fileItem);
+            			fileItem.appendTo(file_cont);
+            		}
+            		file_cont.appendTo(parent_node)
+            		var comments = $('<div></div>').addClass('Comments');
+            		for(var i=0; i< data.reply.length;i++) {
+            			var commentItem = $('<div></div>').addClass('CommentItem');
+                		var reply_user = $('<h4></h4>').text(data.reply[i].POST_USERID + '  ||  		' + data.reply[i].POST_REGDATE).appendTo(commentItem);
+                		var reply_cont = $('<p></p>').text(data.reply[i].POST_CONT).appendTo(commentItem);
+                		commentItem.appendTo(comments);	
+            		}
+            		$('<input>').attr('type','text').attr('placeholder','댓글을 입력해주세요').addClass('itemTxtComment').appendTo(comments);
+            		$('<button></button>').addClass('BtnBlue').text('댓글 달기').appendTo(comments);
+            		comments.appendTo(parent_node);
+            		
+            		console.log('success loading post detail');	
+            	}
+            	else {
+            		console.log("error loading post detail");
+            	}
+            },
+            error:function(err) {
+                alert("ajax 연결문제");
+                console.log(err);
+            }
+			
+		});
+	};
 	var isPost=false;
     function submitFile(post_id) {
 		if(isPost) return false;
@@ -222,7 +276,7 @@
             }
     		if(confirm("수정?")) {
     			alert('ㅇㅇ');
-    			$('#'+post_id).parent().find('.Comments').show();
+    			postDetail(post_id);
     		}
     	}
         
@@ -536,60 +590,9 @@
                 loadPostsNot();
             }
         });
-		$('.Main').on('click','.Item',function() {
-			$('.Content').empty();
-			var parent_node = $('.Content');
-			var post_id = $(this).attr('data-id');
-			console.log(post_id);
-			$.ajax({
-				type:"post",
-                url:"/stk/postDetail",
-                data: JSON.stringify({ post_id:post_id	}),
-                contentType: "application/json; charset=UTF-8",
-                success:function(data) {
-                	if(data.result=="success") {
-                		var post_title = $('<div></div>').addClass('post_title').attr('id',post_id);
-                		$('<div></div>').addClass('post_title_part').text(data.post_title).appendTo(post_title);
-                		if(data.post_userid == currentUser) {
-                			var title_btn=$('<div></div>').addClass('post_title_btn');
-                			$('<button></button>').addClass('BtnRed toRight PostDelete').text('글 삭제하기').appendTo(post_title);
-                			$('<button></button>').addClass('BtnBlue toRight PostUpdate').text('글 수정하기').appendTo(post_title);
-                			//title_btn.appendTo($('.post_title_part'));
-                		}
-                		post_title.appendTo(parent_node);
-                		var post_date = $('<div></div>').addClass('post_date').text('작성일  :  '+ data.post_regdate+'  수정일 : '+data.post_moddate).appendTo(parent_node);
-                		var post_cont = $('<div></div>').addClass('post_cont').text(data.post_cont).appendTo(parent_node);
-                		var file_cont = $('<div></div>').addClass('file_cont').text('첨부파일');
-                		console.log(data.files);
-                		for(var i=0; i<data.files.length;i++) {
-                			var fileItem = $('<div></div>').addClass('FileItems');
-                			$('<a></a>').attr("href",'/stk/fileDownload.do?saveName='+data.files[i].FILE_PATH+'&oldName='+data.files[i].FILE_ORIGIN).text(data.files[i].FILE_ORIGIN).addClass('FileItem').appendTo(fileItem);
-                			fileItem.appendTo(file_cont);
-                		}
-                		file_cont.appendTo(parent_node)
-                		var comments = $('<div></div>').addClass('Comments');
-                		for(var i=0; i< data.reply.length;i++) {
-                			var commentItem = $('<div></div>').addClass('CommentItem');
-                    		var reply_user = $('<h4></h4>').text(data.reply[i].POST_USERID + '  ||  		' + data.reply[i].POST_REGDATE).appendTo(commentItem);
-                    		var reply_cont = $('<p></p>').text(data.reply[i].POST_CONT).appendTo(commentItem);
-                    		commentItem.appendTo(comments);	
-                		}
-                		$('<input>').attr('type','text').attr('placeholder','댓글을 입력해주세요').addClass('itemTxtComment').appendTo(comments);
-                		$('<button></button>').addClass('BtnBlue').text('댓글 달기').appendTo(comments);
-                		comments.appendTo(parent_node);
-                		
-                		console.log('success loading post detail');	
-                	}
-                	else {
-                		console.log("error loading post detail");
-                	}
-                },
-                error:function(err) {
-                    alert("ajax 연결문제");
-                    console.log(err);
-                }
-				
-			});
+		$('.Main').on('click','.Item', function() {
+			var post_id=$(this).attr('data-id');
+			postDetail(post_id);
 		});
         //동적으로 생성된 게시글의 댓글적기버튼에 이벤트를 달아주기
         var isPostUpdate =false;
