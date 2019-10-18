@@ -117,12 +117,12 @@
             	<p>내용</p>
             	<textarea class="writeTextContent" placeholder="내용을 입력하세요"></textarea>
             	<p>파일 업로드하기</p>
-            	<div id="fileUpload" class="dragDropDiv">
-					<table id='fileTable'>
+            	<div class="dragDropDiv fileUpload">
+					<table class='fileTable'>
 						<tr>
-						<td id='tabFileName'>파일명</td>
-						<td id='tabFileSize'>사이즈</td>
-						<td id='tabFileDel'>삭제 </td>
+						<td class='tabFileName'>파일명</td>
+						<td class='tabFileSize'>사이즈</td>
+						<td class='tabFileDel'>삭제 </td>
 						</tr>
 					</table>
 				</div>
@@ -157,6 +157,7 @@
                         var writedate=data.postlist[i].POST_REGDATE;
                         var moddate = data.postlist[i].POST_MODDATE;
                         var item=$('<div></div>').attr('data-id',id).addClass('Item');
+                        //$('<img>').attr('src','경로').addClass('클래스 추가할때 이름');
                         var itemText=$('<div></div').addClass('ItemText').attr('writer',writer).appendTo(item);
                         $('<h4></h4>').text(subject).appendTo(itemText);
                         $('<h6></h6>').text('작성시간 : ' + writedate).appendTo(itemText);
@@ -272,6 +273,7 @@
                 return false;
             } else if(!content2) {
                 alert("내용입력!");
+                
                 return false;
             }
     		if(confirm("수정?")) {
@@ -316,7 +318,7 @@
 				fd.append(files[i].name,files[i]);
 				map.put(files[i].name,files[i].name);
 				var tag = createFile(files[i].name,files[i].size);
-				$('#fileTable').append(tag);
+				$('.fileTable').append(tag);
 			}else {
 				if((files[i].size/megaByte)>20) {
 					alert("20메가 바이트를 초과해 업로드 할 수 없습니다!");
@@ -614,6 +616,24 @@
             	var cont_temp = cont_part.text();
             	cont_part.html('<textarea class="update_cont updateContent">'+cont_temp+'</textarea>');
             	parent_node.find('.Comments').hide();
+            	var fileUpdateDiv = $('<div></div>').addClass("dragDropDiv fileUpload ");
+            	var uploadTab = $('<table></table>').addClass('fileTable dragUpdate');
+            	var _tr = $('<tr></tr>');
+            	$('<td></td>').addClass('tabFileName').text('파일명').appendTo(_tr);
+            	$('<td></td>').addClass('tabFileSize').text('사이즈').appendTo(_tr);
+            	$('<td></td>').addClass('tabFileDel').text('삭제').appendTo(_tr);
+            	_tr.appendTo(uploadTab);
+            	uploadTab.appendTo(fileUpdateDiv);
+            	fileUpdateDiv.appendTo(parent_node);
+            	/* <div class="dragDropDiv fileUpload">
+				<table class='fileTable'>
+					<tr>
+					<td class='tabFileName'>파일명</td>
+					<td class='tabFileSize'>사이즈</td>
+					<td class='tabFileDel'>삭제 </td>
+					</tr>
+				</table>
+				</div> */
             	isPostUpdate=true;
         	}
         	
@@ -646,12 +666,12 @@
         //$('.Main').show(); 
         //$('.Write').show();
         var dragDrop = $('.dragDropDiv');
-        $('.dragDropDiv').on('dragover',function(e) {
+        $(document.body).on('dragover','.dragDropDiv',function(e) {
         	e.stopPropagation();
         	e.preventDefault();
         	$(this).css('border','2px solid red');
         });
-        $('.dragDropDiv').on('drop',function(e) {
+        $(document.body).on('drop','.dragDropDiv',function(e) {
         	$(this).css('2px solid green');
         	e.preventDefault();
         	var files = e.originalEvent.dataTransfer.files;
@@ -660,7 +680,7 @@
 		$(document).on('dragover', function(e) {
 			e.stopPropagation();
 			e.preventDefault();
-			dragDrop.css('border', '2px solid green');
+			$('.dragDropDiv').css('border', '2px solid green');
 		});
     });
     </script>
