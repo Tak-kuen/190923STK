@@ -129,6 +129,7 @@ public class HomeController {
 	public String join(@RequestBody MemberVO mvo) {
 		//회원가입 하기 위한 객체생성
 		String member_id = mvo.getMember_id();
+		System.out.println(member_id);
 		MemberVO resultVO = new MemberVO();
 		
 		//결과 비교용 객체(아이디가 같은것만 찾는다==> 비밀번호 판독을 위해)
@@ -140,8 +141,13 @@ public class HomeController {
 		//아이디 중복검사 결과 판독
 		if(resultVO==null) {
 			//중복없으므로 회원가입처리
-			resultobj.put("result","success");
-			System.out.println(resultobj.toString());
+			int a =memservice.join(mvo);
+			System.out.println(a+"인서트 결과");
+			if( a !=0) {
+				resultobj.put("result","success");
+				System.out.println(resultobj.toString());
+			}
+			
 			return resultobj.toString();
 
 		} else {

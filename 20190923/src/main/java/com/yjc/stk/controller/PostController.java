@@ -40,9 +40,24 @@ public class PostController {
 	private PostService postservice;
 	@Resource(name = "uploadPath")
 	String uploadPath;
-	/**
-	 * Simply selects the home view to render by returning its name.
-	 */
+	//=========최종 예정============
+	//	post = {
+	//		post_id : 'df',
+	//		post_cont : 'dfdfdf',
+	//		post_visit : 2323,
+	//		post_userid: 'dfdf',
+	//		reply : [댓글1{
+	//					post_id :'댓글 아디',
+	//					post_cont: '댓글 내용',
+	//					post_userid : '댓글 작성자',
+	//					post_regdate : '댓글 작성일자',
+	//					post_moddate: '댓글 수정일자'
+	//				},댓글2{}],
+	//		post_regdate : '게시글 작성일자',
+	//		post_moddate : '게시글 수정일자',
+	//		post_file : [ {file_id : '파일 아이디', file_path:'파일 경로'},{}]
+	//	}
+	//
 	@ResponseBody
 	@RequestMapping(value = "/load", method = RequestMethod.POST, produces = "application/json; charset=utf8")
 	public String loadPost(@RequestParam(defaultValue="1") int curPage, @RequestParam(defaultValue="") String keyword) {
@@ -187,54 +202,35 @@ public class PostController {
 	@RequestMapping(value="/fileUpload.do",method=RequestMethod.POST,produces = "application/json; charset=utf8")
 	@ResponseBody
 	public String fileUpload(MultipartHttpServletRequest multipartRequest) {
-		System.err.println(multipartRequest.getParameter("post_title"));
-		System.err.println(multipartRequest.getParameter("post_cont"));
-		System.err.println(multipartRequest.getParameter("post_userid"));
+//		System.err.println(multipartRequest.getParameter("post_title"));
+//		System.err.println(multipartRequest.getParameter("post_cont"));
+//		System.err.println(multipartRequest.getParameter("post_userid"));
+		System.err.println(multipartRequest.getParameter("is_update"));
 		JSONObject resultobj = new JSONObject();
+		String is_update = (String)multipartRequest.getParameter("is_update");
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("post_title",(String)multipartRequest.getParameter("post_title"));
 		map.put("post_cont",(String)multipartRequest.getParameter("post_cont"));
 		map.put("post_userid",(String)multipartRequest.getParameter("post_userid"));
 		try {
-			
 			String file_path = uploadPath;
-			String post_id = postservice.post(map);
-			System.err.println(post_id);
+			String post_id=null;
+			if(is_update.equals("n")||is_update.equals('n')) {
+				post_id = postservice.post(map);
+				System.err.println(post_id);
+			}else if(is_update.equals("y")||is_update.equals('y')) {
+				post_id = (String)multipartRequest.getParameter("post_id");
+				map.put("post_id",post_id);
+				postservice.update(map);
+			}
 			Map<String,List<String>> fileNames = new UploadHandler(multipartRequest,file_path).getUploadFileName();
-			//=========최종 예정============
-			//	post = {
-			//		post_id : 'df',
-			//		post_cont : 'dfdfdf',
-			//		post_visit : 2323,
-			//		post_userid: 'dfdf',
-			//		reply : [댓글1{
-			//					post_id :'댓글 아디',
-			//					post_cont: '댓글 내용',
-			//					post_userid : '댓글 작성자',
-			//					post_regdate : '댓글 작성일자',
-			//					post_moddate: '댓글 수정일자'
-			//				},댓글2{}],
-			//		post_regdate : '게시글 작성일자',
-			//		post_moddate : '게시글 수정일자',
-			//		post_file : [ {file_id : '파일 아이디', file_path:'파일 경로'},{}]
-			//	}
-			//
 			Map<String,Object> fileMap = new HashMap<String,Object>();
-//			for(String fileName:fileNames.get("file_origins")) {
-//				fileMap.put("post_id",post_id);
-//				fileMap.put("file_path",fileName);
-//				for(String oldName:fileNames.get("file_paths")) {
-//					fileMap.put("file_origin",oldName);
-//				}
-//				postservice.fileUpload(fileMap);
-//			}
 			for(int i =0; i<fileNames.get("file_origins").size();i++) {
 				fileMap.put("post_id",post_id);
 				fileMap.put("file_path",fileNames.get("file_origins").get(i));
 				fileMap.put("file_origin",fileNames.get("file_paths").get(i));
 				postservice.fileUpload(fileMap);
-			}
-			
+			}	
 			System.err.println(fileNames.toString());
 			resultobj.put("result","success");
 		}catch(Exception e) {
@@ -250,6 +246,38 @@ public class PostController {
 		String filePath = uploadPath;
 		System.out.println(saveName + "||||" + oldName);
 		return new UploadHandler(resp, filePath, saveName, oldName).getDownloadFileByte();
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/deleteFile")
+	public String deleteFile(@RequestBody Map<String, Object> map) {
+		String file_id = (String)map.get("file_id");
+		System.out.println(file_id);
+		return postservice.deleteFile(file_id);
+	}
+	@ResponseBody
+	@RequestMapping(value="/deletePost")
+	public String deletePost(@RequestBody Map<String, Object> map) {
+		String post_id = (String)map.get("post_id");
+		System.out.println(post_id);
+		return postservice.deletePost(post_id);
+	}
+	@ResponseBody
+	@RequestMapping(value="addReply")
+	public String addReply(@RequestBody Map<String,Object> map) {
+		JSONObject resultobj = new JSONObject();
+		resultobj.put("result","success");
+		resultobj.put("reply_id",postservice.addReply(map));
+		return resultobj.toString();
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="visitCheck")
+	public String visitCheck(@RequestBody Map<String,Object> map) {
+		JSONObject resultobj = new JSONObject();
+		resultobj.put("result","success");
+		resultobj.put("post_visit",postservice.addVisit(map));
+		return resultobj.toString();
 	}
 	
 	

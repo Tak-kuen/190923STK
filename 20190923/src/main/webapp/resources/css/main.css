@@ -205,14 +205,14 @@ input[type="text"], input[type="password"], textarea {
 	padding-left:10px;
 	line-height: 20px;
 	height:20px;
-	background-color: pink;
+	background-color: rgba(255,192,203,0.4);
 }
 .Content .post_date {
 	padding: 10px 5px;
 	padding-left:10px;
 	line-height: 10px;
 	height:10px;
-	background-color: pink;
+	background-color: rgba(255,192,203,0.4);
 	text-align : right;
 }
 
@@ -221,13 +221,13 @@ input[type="text"], input[type="password"], textarea {
 	padding-left:10px;
 	line-height: 13px;
 	height : 400px;
-	background-color: yellow;
+	background-color: rgba(0,0,0,0.1);
 }
 .Content .file_cont{
 	padding: 10px 5px;
 	padding-left:10px;
 	line-height: 20px;
-	background-color: yellowgreen;
+	background-color: rgba(154,205,50,0.3);
 }
 .file_cont .FileItems {
 	margin-top : 5px;
@@ -268,4 +268,24 @@ table , tr , td{
 }
 tr {
 	width:100%;
+}
+.delBtn {
+	line-height:15px;
+	padding:2px;
+}
+.Join {
+	margin:0 auto;
+	width: 600px;
+}
+.Join h3, .Join p, .Join button {
+	text-align : center !important;
+}
+.joinTxtID,.joinTxtPw,.joinTxtPwc {
+	margin:4px !important;
+	margin-left:125px !important;
+	width: 60% !important;
+	text-align : center !important;
+}
+.joinBtnJoin {
+	margin-left:235px;
 }
