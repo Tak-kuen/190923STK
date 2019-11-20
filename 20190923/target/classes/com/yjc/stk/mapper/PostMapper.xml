@@ -65,10 +65,11 @@
 	<!-- 총 게시물 갯수 가져오기 -->
 	<select id="totalPage" resultType="map">
 		select count(*) tot_page from yjc_post
+		where post_ref='x'
 	</select>
 	<select id="totalPage2" resultType="map" parameterType="map">
 		select count(*) tot_page from yjc_post
-		where post_title like '%'||#{keyword}||'%'
+		where post_title like '%'||#{keyword}||'%' and post_ref='x'
 	</select>
 	
 	<select id="postDetail" resultType="map">

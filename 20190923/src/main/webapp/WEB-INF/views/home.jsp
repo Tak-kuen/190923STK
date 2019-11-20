@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>1501163 송탁근</title>
+	<link rel="stylesheet" href="<c:url value="/resources/css/bootstrap.css"/>" />
 	<link rel="stylesheet" href="<c:url value="/resources/css/main.css"/>" />
+	<script type="text/javascript" src="<c:url value="/resources/js/bootstrap.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/resources/js/jquery.min.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/resources/js/jquery.cookie.js"/>"></script>
 	<script type="text/javascript" src="<c:url value="/resources/js/dropzone.js"/>"></script>
@@ -25,8 +27,8 @@
             		비밀번호
             		<input type="password" class="loginTxtPw"size="10"></p>
             		<div class="btnBox">
-            		<button class="loginBtnLogin">로그인</button>
-            		<button class="loginBtnJoin">회원가입</button>
+            		<button class="loginBtnLogin btn btn-outline-primary">로그인</button>
+            		<button class="loginBtnJoin btn btn-outline-info">회원가입</button>
             		</div>
             	</div>
             </div>
@@ -49,16 +51,16 @@
             <input type="password" class="joinTxtPwc" maxlength="50">
             <br>
             <br>
-            <button class="joinBtnJoin">가입하기</button>
-            <button class="joinBtnCancel">가입취소</button>
+            <button class="joinBtnJoin btn btn-outline-primary">가입하기</button>
+            <button class="joinBtnCancel btn btn-outline-danger">가입취소</button>
         </div>
         <div class="Main">
             <div class="Navi">
                 <div class="NaviPadding">
                     <h2>자유게시판</h2>
                     <p>안녕하세요, <b>사용자</b>님.</p>
-                    <button class="mainBtnWrite BtnBlue">글쓰기</button>
-                    <button class="mainBtnLogout BtnRed">로그아웃</button>
+                    <button class="mainBtnWrite btn btn-outline-primary">글쓰기</button>
+                    <button class="mainBtnLogout btn btn-outline-danger">로그아웃</button>
                 </div>
             </div>
             <div class="HeightPadding"></div>
@@ -69,7 +71,7 @@
                         <h6>작성시간 : 2014-11-19 (1:25)</h6>
                         <p>하위 하위 글 내용이 길면 어떻게 표시될까 궁금해서 적어봅니다.</p>
                         <div class="ItemButtons">
-                            <button class="mainBtnDel BtnRed">삭제하기</button>
+                            <button class="mainBtnDel btn btn-outline-danger">삭제하기</button>
                         </div>
                     </div>
                     <div class="Comment">
@@ -107,8 +109,8 @@
                 <div class="NaviPadding">
                 <h2>자유게시판</h2>
                 <p>안녕하세요, <b>사용자</b>님.</p>
-                <button class="mainBtnWrite BtnBlue">글쓰기</button>
-                <button class="mainBtnWrite BtnRed">로그아웃</button>
+                <button class="mainBtnWrite btn btn-outline-primary">글쓰기</button>
+                <button class="mainBtnWrite btn btn-outline-danger">로그아웃</button>
                 </div>
             </div>
             <div class="HeightPadding"></div>
@@ -128,8 +130,8 @@
 					</table>
 				</div>
             	<div class="ItemButtons">
-            		<button onclick="submitFile()" class="BtnBlue">작성하기</button>
-					<button class="writeBtnCancel BtnRed">작성취소</button>
+            		<button onclick="submitFile()" class="btn btn-outline-primary">작성하기</button>
+					<button class="writeBtnCancel btn btn-outline-danger">작성취소</button>
             	</div>
             </div>
         </div>
@@ -167,14 +169,15 @@
                         //loadComment(id);
                     }
                     var pagingParent = $('.Paging');
-                    var toFirst = $('<a></a>').addClass('page-link').attr('href',"javascript:list('1')").html('<span>&lt;&lt;</span>');
+                    var toFirst = $('<a></a>').addClass('btn btn-link').attr('href',"javascript:list('1')").html('<span>&lt;&lt;</span>');
                     toFirst.appendTo(pagingParent);
                     
+                    console.log(data.postPager.blockEnd);
                     for(var i=0; i<data.postPager.blockEnd;i++) {
-                    	var toPage = $('<a></a>').addClass('page-link').attr('href',"javascript:list('"+(i+1)+"')").html('<span>'+(i+1)+'</span>');
+                    	var toPage = $('<a></a>').addClass('btn btn-link').attr('href',"javascript:list('"+(i+1)+"')").html('<span>'+(i+1)+'</span>');
                     	toPage.appendTo(pagingParent);
                     }
-                    var toLast = $('<a></a>').addClass('page-link').attr('href',"javascript:list('"+data.postPager.nextPage+"')").html('<span>&gt;&gt;</span>');
+                    var toLast = $('<a></a>').addClass('btn btn-link').attr('href',"javascript:list('"+data.postPager.nextPage+"')").html('<span>&gt;&gt;</span>');
                     toLast.appendTo(pagingParent);
                 }else {
                     alert("오류발생");
@@ -205,8 +208,8 @@
             		$('<div></div>').addClass('post_title_part').text(data.post_title).appendTo(post_title);
             		if(data.post_userid == $.cookie('curuser')) {
             			var title_btn=$('<div></div>').addClass('post_title_btn');
-            			$('<button></button>').addClass('BtnRed toRight PostDelete').text('글 삭제하기').appendTo(post_title);
-            			$('<button></button>').addClass('BtnBlue toRight PostUpdate').text('글 수정하기').appendTo(post_title);
+            			$('<button></button>').addClass('btn btn-outline-danger toRight PostDelete').text('글 삭제하기').appendTo(post_title);
+            			$('<button></button>').addClass('btn btn-outline-primary toRight PostUpdate').text('글 수정하기').appendTo(post_title);
             			//title_btn.appendTo($('.post_title_part'));
             		}
             		post_title.appendTo(parent_node);
@@ -232,7 +235,7 @@
                 		commentItem.appendTo(comments);	
             		}
             		$('<input>').attr('type','text').attr('placeholder','댓글을 입력해주세요').addClass('itemTxtComment').appendTo(comments);
-            		$('<button></button>').addClass('BtnBlue addReply').text('댓글 달기').appendTo(comments);
+            		$('<button></button>').addClass('btn btn-outline-primary addReply').text('댓글 달기').appendTo(comments);
             		comments.appendTo(parent_node);
             		
             		console.log('success loading post detail');	
@@ -454,15 +457,15 @@
                         //loadComment(id);
                     }
                     var pagingParent = $('.Paging');
-                    var toFirst = $('<a></a>').addClass('page-link').attr('href',"javascript:list('1')").html('<span>&lt;&lt;</span>');
+                    var toFirst = $('<a></a>').addClass('btn btn-link').attr('href',"javascript:list('1')").html('<span>&lt;&lt;</span>');
                     toFirst.appendTo(pagingParent);
                     
                     for(var i=0; i<data.postPager.blockEnd;i++) {
-                    	var toPage = $('<a></a>').addClass('page-link').attr('href',"javascript:list('"+(i+1)+"')").html('<span>'+(i+1)+'</span>');
+                    	var toPage = $('<a></a>').addClass('btn btn-link').attr('href',"javascript:list('"+(i+1)+"')").html('<span>'+(i+1)+'</span>');
                     	toPage.appendTo(pagingParent);
                     	console.log('====');
                     }
-                    var toLast = $('<a></a>').addClass('page-link').attr('href',"javascript:list('"+data.postPager.nextPage+"')").html('<span>&gt;&gt;</span>');
+                    var toLast = $('<a></a>').addClass('btn btn-link').attr('href',"javascript:list('"+data.postPager.nextPage+"')").html('<span>&gt;&gt;</span>');
                     toLast.appendTo(pagingParent);
                 }else {
                     alert("오류발생");
