@@ -190,13 +190,15 @@ input[type="text"], input[type="password"], textarea {
 	margin-bottom:10px !important;
 	resize:none;
 }
-
+.addReply {
+	margin-top:-3px;
+}
 .Paging {
 	width:800px;
 	height:50px;
 	margin : 0 auto;
 	padding:0;
-	padding-left:37%;
+	padding-left:44%;
 }
 .Paging a{
 	list-style:none;	

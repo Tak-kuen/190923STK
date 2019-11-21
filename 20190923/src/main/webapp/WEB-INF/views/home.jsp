@@ -686,12 +686,14 @@
             	cont_part.html('<textarea rows="20" class="update_cont updateContent form-control">'+cont_temp+'</textarea>');
             	parent_node.find('.Comments').hide();
             	var fileUpdateDiv = $('<div></div>').addClass("dragDropDiv fileUpload ");
-            	var uploadTab = $('<table></table>').addClass('fileTable dragUpdate');
+            	var uploadTab = $('<table></table>').addClass('fileTable dragUpdate table');
+            	var _thead = $('<thead></thead>').addClass('thead-light');
             	var _tr = $('<tr></tr>');
-            	$('<td></td>').addClass('tabFileName').text('파일명').appendTo(_tr);
-            	$('<td></td>').addClass('tabFileSize').text('사이즈').appendTo(_tr);
-            	$('<td></td>').addClass('tabFileDel').text('삭제').appendTo(_tr);
-            	_tr.appendTo(uploadTab);
+            	$('<th></th>').addClass('tabFileName').attr('scope','col').text('파일명').appendTo(_tr);
+            	$('<th></th>').addClass('tabFileSize').attr('scope','col').text('사이즈').appendTo(_tr);
+            	$('<th></th>').addClass('tabFileDel').attr('scope','col').text('삭제').appendTo(_tr);
+            	_tr.appendTo(_thead);
+            	_thead.appendTo(uploadTab);
             	uploadTab.appendTo(fileUpdateDiv);
             	fileUpdateDiv.appendTo(parent_node);
             	
