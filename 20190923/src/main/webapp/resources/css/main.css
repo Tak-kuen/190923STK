@@ -72,6 +72,7 @@ input[type="text"], input[type="password"], textarea {
     display: inline-block; width: 35%;
     padding: 4px; margin: 4px;
     border: 1px solid #000;
+    line-height:13px;
 }
 .Navi {
     position: fixed;
@@ -171,20 +172,23 @@ input[type="text"], input[type="password"], textarea {
 	margin-bottom : 3px;
 }
 .writeTextSubject {
-	width:85% !important;
+	width:95% !important;
 	text-align:center !important;
 	margin-bottom:10px !important;
 }
 .writeTextContent {
-	width:85%;
+	width:95%;
 	margin-bottom:10px !important;
-	resize:vertical;
+	resize:none;
+}
+.update_title {
+	width: 80% !important;
 }
 .updateContent {
 	width:770px;
 	height:390px;
 	margin-bottom:10px !important;
-	resize:vertical;
+	resize:none;
 }
 
 .Paging {
@@ -247,6 +251,9 @@ input[type="text"], input[type="password"], textarea {
 .post_title_btn {
 	display:inline-block;
 	width:93px;
+}
+.fileDelBtn {
+	line-height:10px !important;
 }
 .dragDropDiv {
     width: 98%;

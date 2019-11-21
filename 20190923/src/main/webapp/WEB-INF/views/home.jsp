@@ -23,9 +23,9 @@
             	<div class="NaviPadding">
             		<h2>자유게시판</h2>
             		<p>아이디
-            		<input type="text" class="loginTxtID" size="10">
+            		<input type="text" class="loginTxtID form-control" size="10">
             		비밀번호
-            		<input type="password" class="loginTxtPw"size="10"></p>
+            		<input type="password" class="loginTxtPw form-control"size="10"></p>
             		<div class="btnBox">
             		<button class="loginBtnLogin btn btn-outline-primary">로그인</button>
             		<button class="loginBtnJoin btn btn-outline-info">회원가입</button>
@@ -44,11 +44,11 @@
             <h3>회원가입</h3>
             <br>
             <p>아이디</p>
-            <input type="text" class="joinTxtID" maxlength="50">
+            <input type="text" class="joinTxtID form-control"  maxlength="50">
             <p>비밀번호</p>
-            <input type="password" class="joinTxtPw" maxlength="50">
+            <input type="password" class="joinTxtPw form-control" maxlength="50">
             <p>비밀번호 재입력</p>
-            <input type="password" class="joinTxtPwc" maxlength="50">
+            <input type="password" class="joinTxtPwc form-control" maxlength="50">
             <br>
             <br>
             <button class="joinBtnJoin btn btn-outline-primary">가입하기</button>
@@ -116,17 +116,19 @@
             <div class="HeightPadding"></div>
             <div class="WriteItem">
             	<p>제목</p>
-            	<input type="text" class="writeTextSubject" placeholder="제목을 입력하세요" maxlength="50">
+            	<input type="text" class="writeTextSubject form-control" placeholder="제목을 입력하세요" maxlength="50">
             	<p>내용</p>
-            	<textarea class="writeTextContent" placeholder="내용을 입력하세요"></textarea>
+            	<textarea class="writeTextContent form-control" placeholder="내용을 입력하세요"></textarea>
             	<p>파일 업로드하기</p>
             	<div class="dragDropDiv fileUpload">
-					<table class='fileTable'>
-						<tr>
-						<td class='tabFileName'>파일명</td>
-						<td class='tabFileSize'>사이즈</td>
-						<td class='tabFileDel'>삭제 </td>
-						</tr>
+					<table class='fileTable table'>
+						<thead class="thead-light">
+							<tr>
+								<th class='tabFileName' scope='col'>파일명</td>
+								<th class='tabFileSize' scope='col'>사이즈</td>
+								<th class='tabFileDel' scope='col'>삭제 </td>
+							</tr>
+						</thead>
 					</table>
 				</div>
             	<div class="ItemButtons">
@@ -234,7 +236,7 @@
                 		var reply_cont = $('<p></p>').text(data.reply[i].POST_CONT).appendTo(commentItem);
                 		commentItem.appendTo(comments);	
             		}
-            		$('<input>').attr('type','text').attr('placeholder','댓글을 입력해주세요').addClass('itemTxtComment').appendTo(comments);
+            		$('<input>').attr('type','text').attr('placeholder','댓글을 입력해주세요').addClass('itemTxtComment form-control').appendTo(comments);
             		$('<button></button>').addClass('btn btn-outline-primary addReply').text('댓글 달기').appendTo(comments);
             		comments.appendTo(parent_node);
             		
@@ -407,11 +409,13 @@
 			},
 			tag : function() {
 				var tag = new StringBuffer();
+				tag.append('<tbody>');
 				tag.append('<tr>');
-				tag.append('<td class="tabFileName">'+this.name+'</td>');
+				tag.append('<th class="tabFileName" scope="row">'+this.name+'</td>');
 				tag.append('<td class="tabFileSize">'+this.size+'</td>');
-				tag.append("<td class='tabFileDel'><button id='"+this.name+"' onclick='delFile(this)'>취소</button></td>");
+				tag.append("<td class='tabFileDel'><button class='btn btn-outline-danger fileDelBtn' id='"+this.name+"' onclick='delFile(this)'>취소</button></td>");
 				tag.append('</tr>');
+				tag.append('</tbody>');
 				return tag.toString();                    
 			}
 		}
@@ -676,10 +680,10 @@
             	var post_id = $(this).parent().attr('id');
             	var title_part= $('#'+post_id).find('.post_title_part');
             	var title_temp = title_part.text();
-            	title_part.html('<input type="text" class="update_title" value="'+title_temp+'"/>');
+            	title_part.html('<input type="text" class="update_title form-control" value="'+title_temp+'"/>');
             	var cont_part = parent_node.find('.post_cont');
             	var cont_temp = cont_part.text();
-            	cont_part.html('<textarea class="update_cont updateContent">'+cont_temp+'</textarea>');
+            	cont_part.html('<textarea rows="20" class="update_cont updateContent form-control">'+cont_temp+'</textarea>');
             	parent_node.find('.Comments').hide();
             	var fileUpdateDiv = $('<div></div>').addClass("dragDropDiv fileUpload ");
             	var uploadTab = $('<table></table>').addClass('fileTable dragUpdate');
@@ -693,7 +697,7 @@
             	
             	//기존 첨부파일 삭제하기 버튼
             	$('.file_cont .FileItems').each(function(index,item) {
-            		var delBtn = $('<button></button>').addClass('delBtn').text('X');
+            		var delBtn = $('<button></button>').addClass('delBtn btn btn-outline-danger fileDelBtn').text('X');
             		$(item).append(delBtn);
             	});
             	$('.delBtn').on('click',function() {
